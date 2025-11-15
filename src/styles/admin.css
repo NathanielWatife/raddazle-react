@@ -1,0 +1,119 @@
+.admin-dark {
+  background-color: #0f1115;
+}
+.admin-dark .sidebar {
+  background-color: #101318 !important;
+}
+.admin-dark .nav-link { color: #c7c9d1; }
+.admin-dark .nav-link.active { color: #fff; font-weight: 600; }
+.admin-dark .text-accent { color: #7aa2f7; }
+.admin-dark .breadcrumb { --bs-breadcrumb-divider-color: #6c757d; }
+.admin-dark .breadcrumb .breadcrumb-item a { color: #9aa0aa; text-decoration: none; }
+.admin-dark .breadcrumb .breadcrumb-item.active { color: #c7c9d1; }
+.admin-dark .card { background-color: #161a23; color: #e5e7eb; border-color: #202532; }
+.admin-dark .table { color: #e5e7eb; }
+.admin-dark .table-striped>tbody>tr:nth-of-type(odd) { --bs-table-accent-bg: rgba(255,255,255,0.02); }
+.admin-dark .form-control, .admin-dark .form-select { background-color: #0f1115; color: #e5e7eb; border-color: #2a3340; }
+.admin-dark .form-control::placeholder { color: #9aa0aa; }
+.admin-dark .btn-outline-secondary { color: #c7c9d1; border-color: #2a3340; }
+.admin-dark .btn-outline-secondary:hover { background-color: #2a3340; }
+.admin-dark .btn-outline-danger { color: #eab0b0; border-color: #3b2c2e; }
+
+/* Image preview with close (X) overlay */
+.img-preview-box {
+  position: relative;
+  display: inline-block;
+  border: 1px solid #2a3340;
+  border-radius: 6px;
+  padding: 6px;
+  background: #0f1115;
+}
+.img-preview-box img { max-height: 80px; max-width: 100%; display: block; }
+.img-preview-box .btn-close {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #fff;
+  border-radius: 50%;
+  opacity: 0.9;
+}
+
+/* Responsive tables: hide less-important cols on small screens */
+@media (max-width: 768px) {
+  .col-optional { display: none; }
+}
+
+/* Make table controls slightly more compact on small screens */
+@media (max-width: 576px) {
+  .table .btn,
+  .table .form-control,
+  .table .form-select { font-size: 0.875rem; }
+}
+
+/* Mobile sidebar drawer behavior */
+@media (max-width: 991.98px) {
+  .sidebar {
+    width: 260px;
+    transform: translateX(-100%);
+    transition: transform .3s ease;
+    box-shadow: none;
+  }
+  .admin-has-sidebar-open .sidebar {
+    transform: translateX(0);
+    z-index: 1051;
+    box-shadow: 0 0 0 1px rgba(0,0,0,.05), 0 10px 25px rgba(0,0,0,.25);
+  }
+  /* Subtle main content shift for offcanvas effect */
+  .admin-dark main { transition: transform .3s ease; }
+  .admin-has-sidebar-open main { transform: translateX(240px); }
+  .sidebar-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 1050;
+  }
+}
+
+/* Lightweight modal for admin pages (no Bootstrap JS required) */
+.adm-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 1060;
+}
+.adm-modal {
+  position: fixed;
+  left: 50%;
+  top: 10vh;
+  transform: translateX(-50%);
+  width: min(560px, 92vw);
+  background: #fff;
+  color: #0f172a;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+  z-index: 1061;
+  overflow: hidden;
+}
+.adm-modal .adm-modal-header {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.adm-modal .adm-modal-body { padding: 1rem; }
+.adm-modal .adm-modal-footer {
+  padding: 0.75rem 1rem;
+  border-top: 1px solid rgba(0,0,0,0.08);
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+/* Truncate long text in table cells */
+.truncate {
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
