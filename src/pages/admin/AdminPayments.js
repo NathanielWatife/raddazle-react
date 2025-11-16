@@ -56,6 +56,16 @@ const AdminPayments = () => {
     }
   };
 
+  const refundPayment = async (paymentId) => {
+    if (!window.confirm('Trigger gateway refund for this payment?')) return;
+    try {
+      const res = await fetch(`/api/payments/${paymentId}/refund`, { method: 'POST', credentials: 'include' });
+      const data = await res.json();
+      if (!res.ok || data.success === false) throw new Error(data.message || 'Refund failed');
+      await fetchData();
+    } catch (e) { alert(e.message); }
+  };
+
   const canPrev = page > 1;
   const canNext = page < pages;
 
@@ -115,14 +125,14 @@ const AdminPayments = () => {
                     <div className="d-none d-md-flex gap-2">
                       <button className="btn btn-sm btn-outline-success" disabled={p.status==='completed'} onClick={()=>updateStatus(p._id,'completed')}>Approve</button>
                       <button className="btn btn-sm btn-outline-danger" disabled={p.status==='failed'} onClick={()=>updateStatus(p._id,'failed')}>Reject</button>
-                      <button className="btn btn-sm btn-outline-secondary" disabled={p.status==='refunded'} onClick={()=>updateStatus(p._id,'refunded')}>Refund</button>
+                      <button className="btn btn-sm btn-outline-secondary" disabled={p.status==='refunded'} onClick={()=>refundPayment(p._id)}>Refund</button>
                     </div>
                     <div className="dropdown d-md-none">
                       <button className="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">Actions</button>
                       <ul className="dropdown-menu">
                         <li><button className="dropdown-item" disabled={p.status==='completed'} onClick={()=>updateStatus(p._id,'completed')}>Approve</button></li>
                         <li><button className="dropdown-item" disabled={p.status==='failed'} onClick={()=>updateStatus(p._id,'failed')}>Reject</button></li>
-                        <li><button className="dropdown-item" disabled={p.status==='refunded'} onClick={()=>updateStatus(p._id,'refunded')}>Refund</button></li>
+                        <li><button className="dropdown-item" disabled={p.status==='refunded'} onClick={()=>refundPayment(p._id)}>Refund</button></li>
                       </ul>
                     </div>
                   </td>

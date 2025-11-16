@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Layout from '../components/Layout';
-import { orderService } from '../services';
+import { orderService, paymentService } from '../services';
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -27,6 +27,60 @@ const Orders = () => {
   }, []);
 
   const formatCurrency = (value) => `$${Number(value || 0).toFixed(2)}`;
+  const paystackPublicKey = process.env.REACT_APP_PAYSTACK_PUBLIC_KEY;
+  const flwPublicKey = process.env.REACT_APP_FLW_PUBLIC_KEY;
+
+  const payWithPaystack = async (order) => {
+    try {
+      const init = await paymentService.initPaystack(order._id);
+      const ref = init.reference;
+      if (window.PaystackPop && paystackPublicKey) {
+        const handler = window.PaystackPop.setup({
+          key: paystackPublicKey,
+          email: init.email,
+          amount: Math.round((init.amount || 0) * 100),
+          ref,
+          currency: 'NGN',
+          callback: async function() {
+            try { await paymentService.verifyPaystack(ref, order._id); await fetchOrders(); alert('Payment successful!'); } catch (err) { alert(err.response?.data?.message || err.message || 'Verification failed'); }
+          },
+          onClose: function() { /* no-op */ },
+        });
+        handler.openIframe();
+      } else if (init.authorizationUrl) {
+        window.location.href = init.authorizationUrl;
+      } else {
+        alert('Unable to start Paystack payment.');
+      }
+    } catch (e) {
+      alert(e.response?.data?.message || e.message || 'Could not start payment');
+    }
+  };
+
+  const payWithFlutterwave = async (order) => {
+    try {
+      const init = await paymentService.initFlutterwave(order._id);
+      const txRef = init.txRef;
+      if (window.FlutterwaveCheckout && flwPublicKey) {
+        window.FlutterwaveCheckout({
+          public_key: flwPublicKey,
+          tx_ref: txRef,
+          amount: init.amount,
+          currency: init.currency || 'NGN',
+          payment_options: 'card,banktransfer,ussd',
+          customer: { email: init.customer?.email, name: init.customer?.name },
+          callback: async function() {
+            try { await paymentService.verifyFlutterwave(txRef); await fetchOrders(); alert('Payment successful!'); } catch (err) { alert(err.response?.data?.message || err.message || 'Verification failed'); }
+          },
+          onclose: function() { /* no-op */ },
+        });
+      } else {
+        alert('Unable to start Flutterwave payment.');
+      }
+    } catch (e) {
+      alert(e.response?.data?.message || e.message || 'Could not start payment');
+    }
+  };
 
   return (
     <Layout>
@@ -90,9 +144,19 @@ const Orders = () => {
                       )}
                     </td>
                     <td>
-                      <Link to={`/orders/${order._id}`} className="btn btn-sm btn-outline-primary rounded-pill w-xs-100">
-                        View Details
-                      </Link>
+                      <div className="d-flex flex-wrap gap-2">
+                        <Link to={`/orders/${order._id}`} className="btn btn-sm btn-outline-primary rounded-pill w-xs-100">View Details</Link>
+                        {!order.isPaid && (
+                          <>
+                            {paystackPublicKey && (
+                              <button className="btn btn-sm btn-primary rounded-pill w-xs-100" onClick={() => payWithPaystack(order)}>Pay with Paystack</button>
+                            )}
+                            {flwPublicKey && (
+                              <button className="btn btn-sm btn-success rounded-pill w-xs-100" onClick={() => payWithFlutterwave(order)}>Pay with Flutterwave</button>
+                            )}
+                          </>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}
