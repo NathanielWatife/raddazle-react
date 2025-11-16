@@ -17,6 +17,8 @@ const ChatWidget = () => {
   const [loading, setLoading] = useState(false);
   const [bootstrapping, setBootstrapping] = useState(false);
   const [error, setError] = useState('');
+  const [assistantDown, setAssistantDown] = useState(false);
+  const [showHint, setShowHint] = useState(false);
 
   const lastMessages = useMemo(() => messages.slice(-40), [messages]);
 
@@ -47,6 +49,11 @@ const ChatWidget = () => {
         const status = err.response?.status;
         if (status === 401) {
           setError('Session expired. Please log in again.');
+        } else if (status === 503) {
+          setAssistantDown(true);
+          setError('Assistant is currently unavailable.');
+          setShowHint(true);
+          setTimeout(() => setShowHint(false), 4000);
         } else {
           setError(err.response?.data?.message || 'Unable to load previous conversation.');
         }
@@ -93,6 +100,11 @@ const ChatWidget = () => {
       if (err.response?.status === 401) {
         persistSessionId(null);
         setError('Please log in to chat with support.');
+      } else if (err.response?.status === 503) {
+        setAssistantDown(true);
+        setError('Assistant is currently unavailable.');
+        setShowHint(true);
+        setTimeout(() => setShowHint(false), 4000);
       } else {
         setError(err.response?.data?.message || 'Something went wrong. Please try again.');
       }
@@ -187,8 +199,16 @@ const ChatWidget = () => {
         </div>
       )}
 
-      <button type="button" className="chat-toggle btn btn-primary" onClick={() => setIsOpen((open) => !open)}>
-        {isOpen ? 'Hide support' : 'Need help?'}
+      {showHint && (
+        <div className="chat-hint">Assistant unavailable. Try again later.</div>
+      )}
+      <button
+        type="button"
+        className="chat-toggle btn btn-primary"
+        onClick={() => setIsOpen((open) => !open)}
+        title={assistantDown ? 'Assistant unavailable. Try again later.' : undefined}
+      >
+        {assistantDown ? (isOpen ? 'Hide support' : 'Assistant unavailable') : (isOpen ? 'Hide support' : 'Need help?')}
       </button>
     </div>
   );

@@ -158,6 +158,22 @@ a:hover {
     height: 70vh;
   }
 }
+/* Chat hint tooltip */
+.chat-hint {
+  position: fixed;
+  right: 24px;
+  bottom: 72px;
+  background: #0f172a;
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  box-shadow: 0 6px 20px rgba(2, 8, 23, 0.25);
+  z-index: 1100;
+}
+@media (max-width: 576px) {
+  .chat-hint { right: 12px; bottom: 64px; }
+}
 
 /* Compact forms on phones */
 @media (max-width: 576px) {
