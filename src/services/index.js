@@ -126,6 +126,33 @@ export const orderService = {
   }
 };
 
+export const paymentService = {
+  initPaystack: async (orderId) => {
+    const response = await api.post('/payments/paystack/init', { orderId });
+    return response.data;
+  },
+  verifyPaystack: async (reference, orderId) => {
+    const response = await api.post('/payments/paystack/verify', { reference, orderId });
+    return response.data;
+  },
+  initFlutterwave: async (orderId) => {
+    const response = await api.post('/payments/flutterwave/init', { orderId });
+    return response.data;
+  },
+  verifyFlutterwave: async (txRef) => {
+    const response = await api.post('/payments/flutterwave/verify', { txRef });
+    return response.data;
+  },
+  getBankInfo: async () => {
+    const response = await api.get('/payments/bank-info');
+    return response.data;
+  },
+  submitBankTransfer: async (payload) => {
+    const response = await api.post('/payments/bank-transfer/submit', payload);
+    return response.data;
+  }
+};
+
 export const adminService = {
   getDashboard: async () => {
     const response = await api.get('/admin/dashboard');

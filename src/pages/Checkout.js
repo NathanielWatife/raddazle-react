@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { useCart } from '../context/CartContext';
-import { orderService } from '../services';
+import { orderService, paymentService, uploadService } from '../services';
 
 const Checkout = () => {
   const { cart, getCartTotal, clearCart } = useCart();
@@ -18,9 +18,25 @@ const Checkout = () => {
     postcode: '',
     mobile: '',
     email: '',
-    paymentMethod: 'cash'
+    paymentMethod: 'cod',
+    bankRef: '',
+    bankProofImage: ''
   });
   const [loading, setLoading] = useState(false);
+  const [bankInfo, setBankInfo] = useState(null);
+  const paystackPublicKey = process.env.REACT_APP_PAYSTACK_PUBLIC_KEY;
+  const flwPublicKey = process.env.REACT_APP_FLW_PUBLIC_KEY;
+
+  useEffect(() => {
+    // Fetch bank info for display if bank-transfer is chosen
+    const loadBank = async () => {
+      try {
+        const res = await paymentService.getBankInfo();
+        setBankInfo(res.bank);
+      } catch {}
+    };
+    loadBank();
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -31,6 +47,7 @@ const Checkout = () => {
     setLoading(true);
 
     try {
+      const orderPaymentMethod = formData.paymentMethod === 'paystack' ? 'card' : formData.paymentMethod;
       const orderData = {
         shippingAddress: {
           firstName: formData.firstName,
@@ -42,13 +59,101 @@ const Checkout = () => {
           postalCode: formData.postcode,
           mobile: formData.mobile
         },
-        paymentMethod: formData.paymentMethod
+        paymentMethod: orderPaymentMethod
       };
 
-      const response = await orderService.create(orderData);
-      await clearCart();
-      alert('Order placed successfully!');
-      navigate('/orders');
+      const orderRes = await orderService.create(orderData);
+      const order = orderRes?.order || orderRes?.data?.order || orderRes;
+
+      if (formData.paymentMethod === 'cod') {
+        await clearCart();
+        alert('Order placed successfully!');
+        navigate('/orders');
+        return;
+      }
+
+      if (formData.paymentMethod === 'paystack') {
+        const init = await paymentService.initPaystack(order._id);
+        const ref = init.reference;
+        if (window.PaystackPop && paystackPublicKey) {
+          const handler = window.PaystackPop.setup({
+            key: paystackPublicKey,
+            email: init.email,
+            amount: Math.round((init.amount || 0) * 100),
+            ref,
+            currency: 'NGN',
+            callback: async function() {
+              try {
+                await paymentService.verifyPaystack(ref, order._id);
+                await clearCart();
+                alert('Payment successful!');
+                navigate('/orders');
+              } catch (err) {
+                alert(err.response?.data?.message || err.message || 'Verification failed');
+              }
+            },
+            onClose: function() {
+              alert('Payment window closed. You can try again from Orders page.');
+              navigate('/orders');
+            }
+          });
+          handler.openIframe();
+        } else if (init.authorizationUrl) {
+          window.location.href = init.authorizationUrl;
+        } else {
+          alert('Unable to start Paystack payment.');
+        }
+        return;
+      }
+
+      if (formData.paymentMethod === 'bank-transfer') {
+        // Optional: upload proof image first if provided
+        let proofImageUrl = '';
+        if (formData.bankProofImage instanceof File) {
+          const up = await uploadService.uploadImage(formData.bankProofImage);
+          proofImageUrl = up.url || up.imageUrl || up.path || '';
+        }
+        await paymentService.submitBankTransfer({ orderId: order._id, reference: formData.bankRef || `BANK_${order._id}`, proofImageUrl });
+        await clearCart();
+        alert('Order placed. Awaiting payment verification.');
+        navigate('/orders');
+        return;
+      }
+
+      if (formData.paymentMethod === 'flutterwave') {
+        const init = await paymentService.initFlutterwave(order._id);
+        const txRef = init.txRef;
+        if (window.FlutterwaveCheckout && flwPublicKey) {
+          window.FlutterwaveCheckout({
+            public_key: flwPublicKey,
+            tx_ref: txRef,
+            amount: init.amount,
+            currency: init.currency || 'NGN',
+            payment_options: 'card,banktransfer,ussd',
+            customer: {
+              email: init.customer?.email,
+              name: init.customer?.name,
+            },
+            callback: async function(data) {
+              try {
+                await paymentService.verifyFlutterwave(txRef);
+                await clearCart();
+                alert('Payment successful!');
+                navigate('/orders');
+              } catch (err) {
+                alert(err.response?.data?.message || err.message || 'Verification failed');
+              }
+            },
+            onclose: function() {
+              alert('Payment window closed. You can try again from Orders page.');
+              navigate('/orders');
+            },
+          });
+        } else {
+          alert('Unable to start Flutterwave payment.');
+        }
+        return;
+      }
     } catch (error) {
       console.error('Failed to create order:', error);
       alert('Failed to place order. Please try again.');
@@ -279,21 +384,45 @@ const Checkout = () => {
                     </tbody>
                   </table>
                 </div>
-                <div className="row g-4 text-center align-items-center justify-content-center border-bottom py-3">
+                <div className="row g-4 text-start justify-content-center border-bottom py-3">
                   <div className="col-12">
-                    <div className="form-check text-start my-3">
-                      <input 
-                        type="radio" 
-                        className="form-check-input bg-primary border-0" 
-                        id="cash" 
-                        name="paymentMethod" 
-                        value="cash"
-                        checked={formData.paymentMethod === 'cash'}
-                        onChange={handleChange}
-                      />
-                      <label className="form-check-label" htmlFor="cash">Cash On Delivery</label>
+                    <h5 className="mb-3">Payment Method</h5>
+                    <div className="form-check my-2">
+                      <input type="radio" className="form-check-input bg-primary border-0" id="pm-cod" name="paymentMethod" value="cod" checked={formData.paymentMethod === 'cod'} onChange={handleChange} />
+                      <label className="form-check-label" htmlFor="pm-cod">Cash on Delivery</label>
+                    </div>
+                    <div className="form-check my-2">
+                      <input type="radio" className="form-check-input bg-primary border-0" id="pm-paystack" name="paymentMethod" value="paystack" checked={formData.paymentMethod === 'paystack'} onChange={handleChange} />
+                      <label className="form-check-label" htmlFor="pm-paystack">Paystack (Card, Bank, USSD)</label>
+                    </div>
+                    <div className="form-check my-2">
+                      <input type="radio" className="form-check-input bg-primary border-0" id="pm-bank" name="paymentMethod" value="bank-transfer" checked={formData.paymentMethod === 'bank-transfer'} onChange={handleChange} />
+                      <label className="form-check-label" htmlFor="pm-bank">Bank Transfer</label>
                     </div>
                   </div>
+                  {formData.paymentMethod === 'bank-transfer' && (
+                    <div className="col-12">
+                      <div className="p-3 border rounded bg-dark-subtle">
+                        <p className="mb-1"><strong>Bank:</strong> {bankInfo?.bankName || '-'}</p>
+                        <p className="mb-1"><strong>Account Name:</strong> {bankInfo?.accountName || '-'}</p>
+                        <p className="mb-1"><strong>Account Number:</strong> {bankInfo?.accountNumber || '-'}</p>
+                        <p className="mb-2 small text-muted">{bankInfo?.instructions || 'Use your Order ID as payment reference.'}</p>
+                        <div className="row g-2">
+                          <div className="col-12 col-md-6">
+                            <label className="form-label">Transfer Reference</label>
+                            <input className="form-control" name="bankRef" value={formData.bankRef} onChange={handleChange} placeholder="e.g. Mobile app reference" />
+                          </div>
+                          <div className="col-12 col-md-6">
+                            <label className="form-label">Upload Proof (optional)</label>
+                            <input className="form-control" type="file" accept="image/*" onChange={(e)=>{
+                              const file = e.target.files?.[0];
+                              setFormData(prev=>({ ...prev, bankProofImage: file || '' }));
+                            }} />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
                 <div className="row g-4 text-center align-items-center justify-content-center pt-4">
                   <button 

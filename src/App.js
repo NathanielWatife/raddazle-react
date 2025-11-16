@@ -30,6 +30,7 @@ import OrdersAdmin from './pages/admin/OrdersAdmin';
 import ProductInventory from './pages/admin/ProductInventory';
 import AdminProducts from './pages/admin/AdminProducts';
 import AdminCategories from './pages/admin/AdminCategories';
+import AdminPayments from './pages/admin/AdminPayments';
 
 // Components
 import ProtectedRoute from './components/ProtectedRoute';
@@ -110,6 +111,7 @@ function App() {
             <Route path="/admin/products" element={(<ProtectedRoute><AdminRoute><AdminProducts /></AdminRoute></ProtectedRoute>)} />
             <Route path="/admin/products/:id/inventory" element={(<ProtectedRoute><AdminRoute><ProductInventory /></AdminRoute></ProtectedRoute>)} />
             <Route path="/admin/categories" element={(<ProtectedRoute><AdminRoute><AdminCategories /></AdminRoute></ProtectedRoute>)} />
+            <Route path="/admin/payments" element={(<ProtectedRoute><AdminRoute><AdminPayments /></AdminRoute></ProtectedRoute>)} />
             
             {/* 404 */}
             <Route path="*" element={<NotFound />} />
