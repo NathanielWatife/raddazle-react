@@ -29,7 +29,7 @@ const Shop = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await categoryService.getAll();
+      const response = await categoryService.getAll({ includeCounts: true });
       setCategories(response.categories || []);
     } catch (error) {
       console.error('Failed to fetch categories:', error);
