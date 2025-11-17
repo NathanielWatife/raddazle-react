@@ -1,12 +1,16 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import { categoryService, uploadService } from '../../services';
+import { useToast } from '../../context/ToastContext';
+import { useConfirm } from '../../context/ConfirmContext';
 
 const PAGE_SIZE = 10;
 
 const AdminCategories = () => {
+  const toast = useToast();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
+    const confirm = useConfirm();
   const [error, setError] = useState('');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -31,7 +35,9 @@ const AdminCategories = () => {
       setPages(res.pages || 1);
       setCount(res.count || (res.categories || []).length);
     } catch (e) {
-      setError(e.response?.data?.message || e.message);
+      const msg = e.response?.data?.message || e.message;
+      setError('');
+      toast.error(msg || 'Failed to load categories');
     } finally {
       setLoading(false);
     }
@@ -60,7 +66,7 @@ const AdminCategories = () => {
       setEditing(null);
       await fetchData();
     } catch (e) {
-      alert(e.response?.data?.message || 'Failed to save');
+      toast.error(e.response?.data?.message || 'Failed to save');
     }
   };
 
@@ -69,24 +75,31 @@ const AdminCategories = () => {
       await categoryService.update(cat._id, { isActive: !cat.isActive });
       await fetchData();
     } catch (e) {
-      alert(e.response?.data?.message || 'Failed to update');
+      toast.error(e.response?.data?.message || 'Failed to update');
     }
   };
 
   const onDelete = async (cat) => {
-    if (!window.confirm(`Delete category "${cat.name}"?`)) return;
+    const ok = await confirm.confirm({
+      variant: 'danger',
+      title: 'Delete Category',
+      message: `Are you sure you want to delete "${cat.name}"? This cannot be undone.`,
+      okText: 'Delete',
+      cancelText: 'Cancel'
+    });
+    if (!ok) return;
     try {
       await categoryService.remove(cat._id);
       await fetchData();
     } catch (e) {
-      alert(e.response?.data?.message || 'Failed to delete');
+      toast.error(e.response?.data?.message || 'Failed to delete');
     }
   };
 
   const onUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (!file.type.startsWith('image/')) { alert('Please select an image'); return; }
+    if (!file.type.startsWith('image/')) { toast.info('Please select an image'); return; }
     try {
       setUploading(true);
       const res = await uploadService.uploadImage(file);
@@ -94,7 +107,7 @@ const AdminCategories = () => {
       if (!url) throw new Error('No URL from upload');
       setForm(prev => ({ ...prev, image: url }));
     } catch (err) {
-      alert(err.response?.data?.message || err.message || 'Upload failed');
+      toast.error(err.response?.data?.message || err.message || 'Upload failed');
     } finally {
       setUploading(false);
       e.target.value = '';
@@ -120,7 +133,7 @@ const AdminCategories = () => {
         <button className="btn btn-primary btn-sm" onClick={openCreate}><i className="fas fa-plus me-1"></i>New Category</button>
       </div>
 
-      {error && <div className="alert alert-danger">{error}</div>}
+      {/* Errors shown via overlay toasts */}
 
       <div className="table-responsive">
         <table className="table table-striped table-sm">

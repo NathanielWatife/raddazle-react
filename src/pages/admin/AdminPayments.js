@@ -1,12 +1,16 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import { paymentService } from '../../services';
+import { useToast } from '../../context/ToastContext';
+import { useConfirm } from '../../context/ConfirmContext';
 
 const PAGE_SIZE = 10;
 
 const AdminPayments = () => {
+  const toast = useToast();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
+    const confirm = useConfirm();
   const [error, setError] = useState('');
   const [page, setPage] = useState(1);
   const [pages, setPages] = useState(1);
@@ -31,7 +35,8 @@ const AdminPayments = () => {
       setPages(data.pages || 1);
       setCount(data.count || list.length);
     } catch (e) {
-      setError(e.message);
+      setError('');
+      toast.error(e.message || 'Failed to load payments');
     } finally {
       setLoading(false);
     }
@@ -40,7 +45,14 @@ const AdminPayments = () => {
   useEffect(() => { fetchData(); }, []);
 
   const updateStatus = async (paymentId, newStatus) => {
-    if (!window.confirm(`Mark payment as ${newStatus}?`)) return;
+    const ok = await confirm.confirm({
+      variant: newStatus === 'completed' ? 'info' : 'warning',
+      title: `Confirm ${newStatus}`,
+      message: `Are you sure you want to mark this payment as ${newStatus}?`,
+      okText: 'Yes',
+      cancelText: 'No'
+    });
+    if (!ok) return;
     try {
       const res = await fetch(`/api/payments/${paymentId}`, {
         method: 'PUT',
@@ -52,18 +64,25 @@ const AdminPayments = () => {
       if (!res.ok || data.success === false) throw new Error(data.message || 'Failed');
       await fetchData();
     } catch (e) {
-      alert(e.message);
+      toast.error(e.message || 'Failed to update payment');
     }
   };
 
   const refundPayment = async (paymentId) => {
-    if (!window.confirm('Trigger gateway refund for this payment?')) return;
+    const ok = await confirm.confirm({
+      variant: 'danger',
+      title: 'Refund Payment',
+      message: 'Trigger a gateway refund for this payment? This action cannot be undone.',
+      okText: 'Refund',
+      cancelText: 'Cancel'
+    });
+    if (!ok) return;
     try {
       const res = await fetch(`/api/payments/${paymentId}/refund`, { method: 'POST', credentials: 'include' });
       const data = await res.json();
       if (!res.ok || data.success === false) throw new Error(data.message || 'Refund failed');
       await fetchData();
-    } catch (e) { alert(e.message); }
+    } catch (e) { toast.error(e.message || 'Refund failed'); }
   };
 
   const canPrev = page > 1;
@@ -92,7 +111,7 @@ const AdminPayments = () => {
         </div>
       </div>
 
-      {error && <div className="alert alert-danger">{error}</div>}
+      {/* Errors shown via overlay toasts */}
 
       <div className="table-responsive">
         <table className="table table-striped table-sm">

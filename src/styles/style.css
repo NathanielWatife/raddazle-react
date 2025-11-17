@@ -511,3 +511,82 @@
 }
 /*** Footer End ***/
 
+/* Toasts */
+.app-toast-container {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 2000;
+}
+.app-toast {
+    min-width: 280px;
+    max-width: min(92vw, 420px);
+    border-left: 4px solid currentColor;
+    border-radius: 6px;
+    padding: 10px 12px;
+    display: flex;
+    align-items: start;
+    gap: 10px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+.app-toast-content { flex: 1; }
+.app-toast-title { font-weight: 600; margin-bottom: 2px; }
+.app-toast-message { font-size: 0.95rem; line-height: 1.25rem; }
+.app-toast-close {
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+/* Overlay toast with background blur */
+.overlay-toast-backdrop {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.35);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    z-index: 2000;
+}
+.overlay-toast-card {
+    width: min(520px, 92vw);
+    border-radius: 10px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.35);
+    padding: 16px 18px;
+    text-align: center;
+}
+.overlay-toast-title { font-weight: 600; margin-bottom: 6px; font-size: 1.05rem; }
+.overlay-toast-message { font-size: 0.98rem; margin-bottom: 10px; }
+.overlay-toast-actions { display: flex; justify-content: center; }
+.toast-type-dot { display:inline-block; width:10px; height:10px; border-radius:50%; }
+.toast-type-icon { display:inline-flex; width:22px; height:22px; align-items:center; justify-content:center; }
+
+/* Confirm card shares overlay backdrop */
+.overlay-confirm-card {
+        width: min(520px, 92vw);
+        border-radius: 12px;
+        background: #ffffff;
+        box-shadow: 0 20px 45px rgba(0,0,0,0.4);
+        padding: 16px 18px 12px 18px;
+}
+.overlay-confirm-icon { display: flex; justify-content: center; margin-bottom: 6px; }
+.overlay-confirm-content { text-align: center; margin-bottom: 12px; }
+.overlay-confirm-title { font-weight: 700; font-size: 1.05rem; margin-bottom: 4px; }
+.overlay-confirm-message { font-size: 0.96rem; color: #111827; }
+.overlay-confirm-actions { display: flex; gap: 8px; justify-content: center; }
+
+/* Simple pop animation for overlay cards */
+.animate-pop { animation: popIn .18s ease-out; }
+@keyframes popIn {
+    from { opacity: 0; transform: scale(0.96); }
+    to { opacity: 1; transform: scale(1); }
+}
+

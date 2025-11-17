@@ -2,10 +2,12 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { useCart } from '../context/CartContext';
-import { orderService, paymentService, uploadService } from '../services';
+import { orderService, paymentService } from '../services';
+import { useToast } from '../context/ToastContext';
 
 const Checkout = () => {
   const { cart, getCartTotal, clearCart } = useCart();
+  const toast = useToast();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     firstName: '',
@@ -19,8 +21,7 @@ const Checkout = () => {
     mobile: '',
     email: '',
     paymentMethod: 'cod',
-    bankRef: '',
-    bankProofImage: ''
+    bankRef: ''
   });
   const [loading, setLoading] = useState(false);
   const [bankInfo, setBankInfo] = useState(null);
@@ -33,7 +34,7 @@ const Checkout = () => {
       try {
         const res = await paymentService.getBankInfo();
         setBankInfo(res.bank);
-      } catch {}
+      } catch { }
     };
     loadBank();
   }, []);
@@ -67,7 +68,7 @@ const Checkout = () => {
 
       if (formData.paymentMethod === 'cod') {
         await clearCart();
-        alert('Order placed successfully!');
+        toast.success('Order placed successfully!');
         navigate('/orders');
         return;
       }
@@ -82,18 +83,18 @@ const Checkout = () => {
             amount: Math.round((init.amount || 0) * 100),
             ref,
             currency: 'NGN',
-            callback: async function() {
+            callback: async function () {
               try {
                 await paymentService.verifyPaystack(ref, order._id);
                 await clearCart();
-                alert('Payment successful!');
+                toast.success('Payment successful!');
                 navigate('/orders');
               } catch (err) {
-                alert(err.response?.data?.message || err.message || 'Verification failed');
+                toast.error(err.response?.data?.message || err.message || 'Verification failed');
               }
             },
-            onClose: function() {
-              alert('Payment window closed. You can try again from Orders page.');
+            onClose: function () {
+              toast.info('Payment window closed. You can try again from Orders.');
               navigate('/orders');
             }
           });
@@ -101,21 +102,15 @@ const Checkout = () => {
         } else if (init.authorizationUrl) {
           window.location.href = init.authorizationUrl;
         } else {
-          alert('Unable to start Paystack payment.');
+          toast.error('Unable to start Paystack payment.');
         }
         return;
       }
 
       if (formData.paymentMethod === 'bank-transfer') {
-        // Optional: upload proof image first if provided
-        let proofImageUrl = '';
-        if (formData.bankProofImage instanceof File) {
-          const up = await uploadService.uploadImage(formData.bankProofImage);
-          proofImageUrl = up.url || up.imageUrl || up.path || '';
-        }
-        await paymentService.submitBankTransfer({ orderId: order._id, reference: formData.bankRef || `BANK_${order._id}`, proofImageUrl });
+        await paymentService.submitBankTransfer({ orderId: order._id, reference: formData.bankRef || `BANK_${order._id}` });
         await clearCart();
-        alert('Order placed. Awaiting payment verification.');
+        toast.info('Order placed. Awaiting bank transfer verification.');
         navigate('/orders');
         return;
       }
@@ -134,29 +129,29 @@ const Checkout = () => {
               email: init.customer?.email,
               name: init.customer?.name,
             },
-            callback: async function(data) {
+            callback: async function (data) {
               try {
                 await paymentService.verifyFlutterwave(txRef);
                 await clearCart();
-                alert('Payment successful!');
+                toast.success('Payment successful!');
                 navigate('/orders');
               } catch (err) {
-                alert(err.response?.data?.message || err.message || 'Verification failed');
+                toast.error(err.response?.data?.message || err.message || 'Verification failed');
               }
             },
-            onclose: function() {
-              alert('Payment window closed. You can try again from Orders page.');
+            onclose: function () {
+              toast.info('Payment window closed. You can try again from Orders.');
               navigate('/orders');
             },
           });
         } else {
-          alert('Unable to start Flutterwave payment.');
+          toast.error('Unable to start Flutterwave payment.');
         }
         return;
       }
     } catch (error) {
       console.error('Failed to create order:', error);
-      alert('Failed to place order. Please try again.');
+      toast.error('Failed to place order. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -180,9 +175,9 @@ const Checkout = () => {
                   <div className="col-md-12 col-lg-6">
                     <div className="form-item w-100">
                       <label className="form-label my-3">First Name<sup>*</sup></label>
-                      <input 
-                        type="text" 
-                        className="form-control" 
+                      <input
+                        type="text"
+                        className="form-control"
                         name="firstName"
                         value={formData.firstName}
                         onChange={handleChange}
@@ -193,9 +188,9 @@ const Checkout = () => {
                   <div className="col-md-12 col-lg-6">
                     <div className="form-item w-100">
                       <label className="form-label my-3">Last Name<sup>*</sup></label>
-                      <input 
-                        type="text" 
-                        className="form-control" 
+                      <input
+                        type="text"
+                        className="form-control"
                         name="lastName"
                         value={formData.lastName}
                         onChange={handleChange}
@@ -206,9 +201,9 @@ const Checkout = () => {
                 </div>
                 <div className="form-item">
                   <label className="form-label my-3">Company Name<sup>*</sup></label>
-                  <input 
-                    type="text" 
-                    className="form-control" 
+                  <input
+                    type="text"
+                    className="form-control"
                     name="companyName"
                     value={formData.companyName}
                     onChange={handleChange}
@@ -216,9 +211,9 @@ const Checkout = () => {
                 </div>
                 <div className="form-item">
                   <label className="form-label my-3">Address <sup>*</sup></label>
-                  <input 
-                    type="text" 
-                    className="form-control" 
+                  <input
+                    type="text"
+                    className="form-control"
                     placeholder="House Number Street Name"
                     name="address"
                     value={formData.address}
@@ -228,9 +223,9 @@ const Checkout = () => {
                 </div>
                 <div className="form-item">
                   <label className="form-label my-3">Town/City<sup>*</sup></label>
-                  <input 
-                    type="text" 
-                    className="form-control" 
+                  <input
+                    type="text"
+                    className="form-control"
                     name="city"
                     value={formData.city}
                     onChange={handleChange}
@@ -239,9 +234,9 @@ const Checkout = () => {
                 </div>
                 <div className="form-item">
                   <label className="form-label my-3">Country<sup>*</sup></label>
-                  <input 
-                    type="text" 
-                    className="form-control" 
+                  <input
+                    type="text"
+                    className="form-control"
                     name="country"
                     value={formData.country}
                     onChange={handleChange}
@@ -250,9 +245,9 @@ const Checkout = () => {
                 </div>
                 <div className="form-item">
                   <label className="form-label my-3">State/Province<sup>*</sup></label>
-                  <input 
-                    type="text" 
-                    className="form-control" 
+                  <input
+                    type="text"
+                    className="form-control"
                     name="state"
                     value={formData.state}
                     onChange={handleChange}
@@ -261,9 +256,9 @@ const Checkout = () => {
                 </div>
                 <div className="form-item">
                   <label className="form-label my-3">Postcode/Zip<sup>*</sup></label>
-                  <input 
-                    type="text" 
-                    className="form-control" 
+                  <input
+                    type="text"
+                    className="form-control"
                     name="postcode"
                     value={formData.postcode}
                     onChange={handleChange}
@@ -272,9 +267,9 @@ const Checkout = () => {
                 </div>
                 <div className="form-item">
                   <label className="form-label my-3">Mobile<sup>*</sup></label>
-                  <input 
-                    type="tel" 
-                    className="form-control" 
+                  <input
+                    type="tel"
+                    className="form-control"
                     name="mobile"
                     value={formData.mobile}
                     onChange={handleChange}
@@ -283,9 +278,9 @@ const Checkout = () => {
                 </div>
                 <div className="form-item">
                   <label className="form-label my-3">Email Address<sup>*</sup></label>
-                  <input 
-                    type="email" 
-                    className="form-control" 
+                  <input
+                    type="email"
+                    className="form-control"
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
@@ -310,10 +305,10 @@ const Checkout = () => {
                         <tr key={item.product._id}>
                           <th scope="row">
                             <div className="d-flex align-items-center mt-2">
-                              <img 
-                                src={item.product.image || '/img/vegetable-item-2.jpg'} 
-                                className="img-fluid rounded-circle" 
-                                style={{ width: '90px', height: '90px' }} 
+                              <img
+                                src={item.product.image || '/img/vegetable-item-2.jpg'}
+                                className="img-fluid rounded-circle"
+                                style={{ width: '90px', height: '90px' }}
                                 alt=""
                               />
                             </div>
@@ -344,23 +339,23 @@ const Checkout = () => {
                         </td>
                         <td colSpan="3" className="py-5">
                           <div className="form-check text-start">
-                            <input 
-                              type="checkbox" 
-                              className="form-check-input bg-primary border-0" 
-                              id="Shipping-1" 
-                              name="Shipping-1" 
-                              defaultChecked 
+                            <input
+                              type="checkbox"
+                              className="form-check-input bg-primary border-0"
+                              id="Shipping-1"
+                              name="Shipping-1"
+                              defaultChecked
                             />
                             <label className="form-check-label" htmlFor="Shipping-1">
                               Free Shipping
                             </label>
                           </div>
                           <div className="form-check text-start">
-                            <input 
-                              type="checkbox" 
-                              className="form-check-input bg-primary border-0" 
-                              id="Shipping-2" 
-                              name="Shipping-2" 
+                            <input
+                              type="checkbox"
+                              className="form-check-input bg-primary border-0"
+                              id="Shipping-2"
+                              name="Shipping-2"
                             />
                             <label className="form-check-label" htmlFor="Shipping-2">
                               Flat rate: $15.00
@@ -412,21 +407,14 @@ const Checkout = () => {
                             <label className="form-label">Transfer Reference</label>
                             <input className="form-control" name="bankRef" value={formData.bankRef} onChange={handleChange} placeholder="e.g. Mobile app reference" />
                           </div>
-                          <div className="col-12 col-md-6">
-                            <label className="form-label">Upload Proof (optional)</label>
-                            <input className="form-control" type="file" accept="image/*" onChange={(e)=>{
-                              const file = e.target.files?.[0];
-                              setFormData(prev=>({ ...prev, bankProofImage: file || '' }));
-                            }} />
-                          </div>
                         </div>
                       </div>
                     </div>
                   )}
                 </div>
                 <div className="row g-4 text-center align-items-center justify-content-center pt-4">
-                  <button 
-                    type="submit" 
+                  <button
+                    type="submit"
                     className="btn border-secondary py-3 px-4 text-uppercase w-100 text-primary"
                     disabled={loading}
                   >

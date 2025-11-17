@@ -1,10 +1,31 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Layout from '../components/Layout';
+import { contactService } from '../services';
+import { useToast } from '../context/ToastContext';
 
 const Contact = () => {
-  const handleSubmit = (e) => {
+  const [form, setForm] = useState({ name: '', email: '', subject: '', phone: '', message: '' });
+  const [loading, setLoading] = useState(false);
+  const toast = useToast();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert('Message sent! We will get back to you soon.');
+    setLoading(true);
+    
+    try {
+      const body = { name: form.name, email: form.email, subject: form.subject, phone: form.phone, message: form.message };
+      const res = await contactService.submit(body);
+      if (res?.success) {
+        toast.success('Message sent! We will get back to you soon.');
+        setForm({ name: '', email: '', subject: '', phone: '', message: '' });
+      } else {
+        throw new Error(res?.message || 'Failed to send message');
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || err.message || 'Failed to send message');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -36,30 +57,50 @@ const Contact = () => {
               </div>
               <div className="col-lg-7">
                 <form onSubmit={handleSubmit}>
-                  <input 
-                    type="text" 
-                    className="w-100 form-control border-0 py-3 mb-4" 
+                  <input
+                    type="text"
+                    className="w-100 form-control border-0 py-3 mb-3"
                     placeholder="Your Name"
+                    value={form.name}
+                    onChange={(e)=>setForm({ ...form, name: e.target.value })}
                     required
                   />
-                  <input 
-                    type="email" 
-                    className="w-100 form-control border-0 py-3 mb-4" 
-                    placeholder="Enter Your Email"
+                  <input
+                    type="email"
+                    className="w-100 form-control border-0 py-3 mb-3"
+                    placeholder="Your Email"
+                    value={form.email}
+                    onChange={(e)=>setForm({ ...form, email: e.target.value })}
                     required
                   />
-                  <textarea 
-                    className="w-100 form-control border-0 mb-4" 
-                    rows="5" 
-                    cols="10" 
+                  <input
+                    type="text"
+                    className="w-100 form-control border-0 py-3 mb-3"
+                    placeholder="Subject (optional)"
+                    value={form.subject}
+                    onChange={(e)=>setForm({ ...form, subject: e.target.value })}
+                  />
+                  <input
+                    type="tel"
+                    className="w-100 form-control border-0 py-3 mb-3"
+                    placeholder="Phone (optional)"
+                    value={form.phone}
+                    onChange={(e)=>setForm({ ...form, phone: e.target.value })}
+                  />
+                  <textarea
+                    className="w-100 form-control border-0 mb-3"
+                    rows="5"
                     placeholder="Your Message"
+                    value={form.message}
+                    onChange={(e)=>setForm({ ...form, message: e.target.value })}
                     required
                   ></textarea>
-                  <button 
-                    className="w-100 btn form-control border-secondary py-3 bg-white text-primary" 
+                  <button
+                    className="w-100 btn form-control border-secondary py-3 bg-white text-primary"
                     type="submit"
+                    disabled={loading}
                   >
-                    Submit
+                    {loading ? 'Sending…' : 'Submit'}
                   </button>
                 </form>
               </div>

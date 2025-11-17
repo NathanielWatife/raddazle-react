@@ -56,6 +56,7 @@ const AdminLayout = ({ title, children }) => {
               <NavItem to="/admin/products" icon="fas fa-box" label="Products" />
               <NavItem to="/admin/orders" icon="fas fa-shopping-cart" label="Orders" />
               <NavItem to="/admin/payments" icon="fas fa-receipt" label="Payments" />
+              <NavItem to="/admin/webhook-events" icon="fas fa-plug" label="Webhook Events" />
               {/* Product admin pages can be added later */}
               {/* <NavItem to="/admin/products" icon="fas fa-box" label="Products" /> */}
             </ul>

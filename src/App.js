@@ -1,6 +1,10 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { ToastProvider } from './context/ToastContext';
+import { ConfirmProvider } from './context/ConfirmContext';
+import ToastContainer from './components/ToastContainer';
+import ConfirmDialog from './components/ConfirmDialog';
 import { useAuth } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 
@@ -31,6 +35,7 @@ import ProductInventory from './pages/admin/ProductInventory';
 import AdminProducts from './pages/admin/AdminProducts';
 import AdminCategories from './pages/admin/AdminCategories';
 import AdminPayments from './pages/admin/AdminPayments';
+import AdminWebhookEvents from './pages/admin/AdminWebhookEvents';
 
 // Components
 import ProtectedRoute from './components/ProtectedRoute';
@@ -60,6 +65,8 @@ function App() {
   return (
     <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <AuthProvider>
+        <ToastProvider>
+        <ConfirmProvider>
         <CartProvider>
           <Routes>
             {/* Customer Routes (admins are redirected to admin dashboard) */}
@@ -112,11 +119,16 @@ function App() {
             <Route path="/admin/products/:id/inventory" element={(<ProtectedRoute><AdminRoute><ProductInventory /></AdminRoute></ProtectedRoute>)} />
             <Route path="/admin/categories" element={(<ProtectedRoute><AdminRoute><AdminCategories /></AdminRoute></ProtectedRoute>)} />
             <Route path="/admin/payments" element={(<ProtectedRoute><AdminRoute><AdminPayments /></AdminRoute></ProtectedRoute>)} />
+            <Route path="/admin/webhook-events" element={(<ProtectedRoute><AdminRoute><AdminWebhookEvents /></AdminRoute></ProtectedRoute>)} />
             
             {/* 404 */}
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <ToastContainer />
+          <ConfirmDialog />
         </CartProvider>
+        </ConfirmProvider>
+        </ToastProvider>
       </AuthProvider>
     </Router>
   );

@@ -255,3 +255,10 @@ export const chatbotService = {
     return response.data;
   }
 };
+
+export const contactService = {
+  submit: async (payload) => {
+    const response = await api.post('/contact', payload);
+    return response.data;
+  }
+};

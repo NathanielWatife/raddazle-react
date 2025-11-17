@@ -3,6 +3,7 @@ import { orderService } from '../../services';
 import ProtectedRoute from '../../components/ProtectedRoute';
 import AdminRoute from '../../components/AdminRoute';
 import AdminLayout from '../../components/admin/AdminLayout';
+import { useToast } from '../../context/ToastContext';
 
 const statusOptions = ['pending','processing','shipped','delivered','cancelled'];
 
@@ -12,6 +13,7 @@ const OrdersAdmin = () => {
   const [error, setError] = useState('');
   const [shipForms, setShipForms] = useState({});
   const [shipModalOrder, setShipModalOrder] = useState(null);
+  const toast = useToast();
 
   const fetchOrders = async (page = 1) => {
     setLoading(true);
@@ -20,7 +22,8 @@ const OrdersAdmin = () => {
       const res = await orderService.getAll({ page, pageSize: 10 });
       setData(res);
     } catch (e) {
-      setError(e.response?.data?.message || e.message);
+      setError('');
+      toast.error(e.response?.data?.message || e.message || 'Failed to load orders');
     } finally {
       setLoading(false);
     }
@@ -60,7 +63,7 @@ const OrdersAdmin = () => {
 
   return (
     <AdminLayout title="Orders">
-      {error && <div className="alert alert-danger">{error}</div>}
+      {/* Errors shown via overlay toasts */}
       {loading ? (
         <div className="text-center py-5"><div className="spinner-border" /></div>
       ) : (
