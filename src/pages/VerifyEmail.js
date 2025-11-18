@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import Layout from '../components/Layout';
+import AnimatedSection from '../components/AnimatedSection';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 
 const VerifyEmail = () => {
   const [searchParams] = useSearchParams();
@@ -11,22 +13,20 @@ const VerifyEmail = () => {
   const [code, setCode] = useState('');
   const [loading, setLoading] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [info, setInfo] = useState('');
   const navigate = useNavigate();
   const { refreshUser } = useAuth();
+  const toast = useToast();
 
   useEffect(() => {
     if (initialEmail && !email) setEmail(initialEmail);
-  }, [initialEmail]);
+  }, [initialEmail, email]);
 
-  const handleVerify = async (e) => {
+  const handleVerify = useCallback(async (e) => {
     if (e) e.preventDefault();
-    setError('');
-    setInfo('');
+    
 
     if (!email || code.trim().length !== 6) {
-      setError('Enter your email and the 6-digit code.');
+      toast.error('Enter your email and the 6-digit code.');
       return;
     }
 
@@ -37,34 +37,31 @@ const VerifyEmail = () => {
       navigate('/profile', { replace: true });
     } catch (err) {
       const message = err.response?.data?.message || 'Verification failed. Please try again.';
-      setError(message);
+      toast.error(message);
     } finally {
       setLoading(false);
     }
-  };
+  }, [email, code, navigate, refreshUser, toast]);
 
   // Auto-submit when 6 digits entered
   useEffect(() => {
     if (code.trim().length === 6 && !loading) {
       handleVerify();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [code]);
+  }, [code, loading, handleVerify]);
 
   const handleResend = async () => {
     if (!email) {
-      setError('Enter your email to resend the code.');
+      toast.error('Enter your email to resend the code.');
       return;
     }
     setResendLoading(true);
-    setError('');
-    setInfo('');
     try {
       await api.post('/auth/reset-verification', { email });
-      setInfo('A new verification code has been sent to your email.');
+      toast.success('A new verification code has been sent to your email.');
     } catch (err) {
       const message = err.response?.data?.message || 'Unable to resend code. Please try again later.';
-      setError(message);
+      toast.error(message);
     } finally {
       setResendLoading(false);
     }
@@ -72,21 +69,20 @@ const VerifyEmail = () => {
 
   return (
     <Layout>
-      <div className="container py-5" style={{ marginTop: '120px' }}>
+      <AnimatedSection className="container-fluid page-header py-5" animationClass="animate-fade-up">
+        <h1 className="text-center text-white display-6">Verify Email</h1>
+        <ol className="breadcrumb justify-content-center mb-0">
+          <li className="breadcrumb-item"><a href="/">Home</a></li>
+          <li className="breadcrumb-item active text-white">Verify Email</li>
+        </ol>
+      </AnimatedSection>
+      <AnimatedSection className="container py-5" animationClass="animate-fade-up">
         <div className="row justify-content-center">
           <div className="col-lg-6">
             <div className="card shadow-sm border-0">
               <div className="card-body p-4 p-md-5">
                 <h2 className="text-center text-primary mb-1">Verify your email</h2>
                 <p className="text-center text-muted mb-4">Enter the 6-digit code we sent to your email</p>
-
-                {error && (
-                  <div className="alert alert-danger" role="alert">{error}</div>
-                )}
-                {info && (
-                  <div className="alert alert-info" role="alert">{info}</div>
-                )}
-
                 <form onSubmit={handleVerify}>
                   <div className="mb-3">
                     <label htmlFor="email" className="form-label">Email address</label>
@@ -120,7 +116,7 @@ const VerifyEmail = () => {
                     <div className="form-text">Code expires in 24 hours.</div>
                   </div>
 
-                  <button type="submit" className="btn btn-primary w-100" disabled={loading}>
+                  <button type="submit" className="btn btn-primary w-100 btn-glow" disabled={loading}>
                     {loading ? 'Verifying...' : 'Verify & Continue'}
                   </button>
                 </form>
@@ -135,7 +131,7 @@ const VerifyEmail = () => {
             </div>
           </div>
         </div>
-      </div>
+      </AnimatedSection>
     </Layout>
   );
 };

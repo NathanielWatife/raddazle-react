@@ -1,5 +1,6 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import AnimatedSection from './AnimatedSection';
+import { formatCurrency } from '../utils/currency';
 
 const ProductCard = ({ product, onAddToCart }) => {
   const handleAddToCart = (e) => {
@@ -10,8 +11,8 @@ const ProductCard = ({ product, onAddToCart }) => {
   };
 
   return (
-    <div className="col-12 col-md-6 col-lg-4 col-xl-3">
-      <div className="rounded position-relative fruite-item">
+    <AnimatedSection className="col-12 col-md-6 col-lg-4 col-xl-3" animationClass="animate-fade-up">
+      <div className="rounded position-relative fruite-item hover-lift hover-shine">
         <div className="fruite-img">
           <img 
             src={product.image || '/img/fruite-item-1.jpg'} 
@@ -29,18 +30,18 @@ const ProductCard = ({ product, onAddToCart }) => {
           <p className="line-clamp-2">{product.description}</p>
           <div className="d-flex justify-content-between flex-lg-wrap">
             <p className="text-dark fs-5 fw-bold mb-0">
-              ${product.price?.toFixed(2)}
+              {formatCurrency(product.price)}
             </p>
             <button 
               onClick={handleAddToCart}
-              className="btn border border-secondary rounded-pill px-3 text-primary"
+              className="btn btn-primary btn-glow rounded-pill px-3"
             >
-              <i className="fa fa-shopping-bag me-2 text-primary"></i> Add to cart
+              <i className="fa fa-shopping-bag me-2"></i> Add to Cart
             </button>
           </div>
         </div>
       </div>
-    </div>
+    </AnimatedSection>
   );
 };
 

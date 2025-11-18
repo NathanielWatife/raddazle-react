@@ -1,45 +1,44 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { useNavigate, useParams, Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { orderService } from '../services';
+import { formatCurrency } from '../utils/currency';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
+import { useConfirm } from '../context/ConfirmContext';
 
 const OrderDetail = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
   const { user } = useAuth();
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [actionMessage, setActionMessage] = useState('');
-  const [actionError, setActionError] = useState('');
   const [processing, setProcessing] = useState(false);
+  const toast = useToast();
+  const confirm = useConfirm();
 
   const fetchOrder = useCallback(async () => {
     try {
       setLoading(true);
       const response = await orderService.getById(id);
       setOrder(response.order);
-      setActionError('');
     } catch (err) {
       const message = err.response?.data?.message || 'Unable to load order.';
-      setActionError(message);
+      toast.error(message);
       setOrder(null);
     } finally {
       setLoading(false);
     }
-  }, [id]);
+  }, [id, toast]);
 
   useEffect(() => {
     fetchOrder();
   }, [fetchOrder]);
 
-  const formatCurrency = (value) => `$${Number(value || 0).toFixed(2)}`;
+  const fmt = (value) => formatCurrency(value);
 
   const handleMockPayment = async () => {
     if (!order || order.isPaid) return;
     setProcessing(true);
-    setActionMessage('');
-    setActionError('');
     try {
       const paymentData = {
         id: `PAY-${Date.now()}`,
@@ -48,11 +47,11 @@ const OrderDetail = () => {
         email_address: user?.email,
       };
       const response = await orderService.pay(order._id, paymentData);
-      setActionMessage('Payment recorded successfully.');
+      toast.success('Payment recorded successfully.');
       setOrder(response.order);
     } catch (err) {
       const message = err.response?.data?.message || 'Payment failed. Please try again.';
-      setActionError(message);
+      toast.error(message);
     } finally {
       setProcessing(false);
     }
@@ -60,17 +59,16 @@ const OrderDetail = () => {
 
   const handleCancel = async () => {
     if (!order || order.status === 'cancelled' || order.isDelivered) return;
-    if (!window.confirm('Cancel this order?')) return;
+    const ok = await confirm({ title: 'Cancel this order?', message: 'This action cannot be undone.', variant: 'danger', okText: 'Cancel order' });
+    if (!ok) return;
     setProcessing(true);
-    setActionMessage('');
-    setActionError('');
     try {
       const response = await orderService.cancel(order._id);
       setOrder(response.order);
-      setActionMessage('Order cancelled.');
+      toast.success('Order cancelled.');
     } catch (err) {
       const message = err.response?.data?.message || 'Unable to cancel order.';
-      setActionError(message);
+      toast.error(message);
     } finally {
       setProcessing(false);
     }
@@ -92,9 +90,7 @@ const OrderDetail = () => {
     return (
       <Layout>
         <div className="container py-5" style={{ marginTop: '120px' }}>
-          <div className="alert alert-danger" role="alert">
-            {actionError || 'Order not found.'}
-          </div>
+          <p className="text-muted mb-3">Order not found.</p>
           <Link to="/orders" className="btn btn-outline-primary">Back to orders</Link>
         </div>
       </Layout>
@@ -103,7 +99,15 @@ const OrderDetail = () => {
 
   return (
     <Layout>
-      <div className="container py-5" style={{ marginTop: '120px' }}>
+      <div className="container-fluid page-header py-5">
+        <h1 className="text-center text-white display-6">Order Details</h1>
+        <ol className="breadcrumb justify-content-center mb-0">
+          <li className="breadcrumb-item"><a href="/">Home</a></li>
+          <li className="breadcrumb-item"><a href="/orders">Orders</a></li>
+          <li className="breadcrumb-item active text-white">Details</li>
+        </ol>
+      </div>
+      <div className="container py-5">
         <div className="d-flex justify-content-between align-items-center mb-4">
           <div>
             <h1 className="h3 mb-1">Order #{order._id.slice(-6)}</h1>
@@ -112,8 +116,7 @@ const OrderDetail = () => {
           <Link to="/orders" className="btn btn-outline-secondary">Back to orders</Link>
         </div>
 
-        {actionMessage && <div className="alert alert-success">{actionMessage}</div>}
-        {actionError && <div className="alert alert-danger">{actionError}</div>}
+        
 
         <div className="row g-4">
           <div className="col-lg-8">
@@ -145,7 +148,7 @@ const OrderDetail = () => {
                         <small className="text-muted">Qty {item.quantity}</small>
                       </div>
                     </div>
-                    <p className="mb-0 fw-semibold order-item-price">{formatCurrency(item.price * item.quantity)}</p>
+                    <p className="mb-0 fw-semibold order-item-price">{fmt(item.price * item.quantity)}</p>
                   </div>
                 ))}
               </div>
@@ -181,19 +184,19 @@ const OrderDetail = () => {
                 <h5 className="mb-3">Order Summary</h5>
                 <div className="d-flex justify-content-between mb-2">
                   <span>Items</span>
-                  <span>{formatCurrency(order.itemsPrice)}</span>
+                  <span>{fmt(order.itemsPrice)}</span>
                 </div>
                 <div className="d-flex justify-content-between mb-2">
                   <span>Tax</span>
-                  <span>{formatCurrency(order.taxPrice)}</span>
+                  <span>{fmt(order.taxPrice)}</span>
                 </div>
                 <div className="d-flex justify-content-between mb-2">
                   <span>Shipping</span>
-                  <span>{formatCurrency(order.shippingPrice)}</span>
+                  <span>{fmt(order.shippingPrice)}</span>
                 </div>
                 <div className="d-flex justify-content-between border-top pt-2 fw-bold">
                   <span>Total</span>
-                  <span>{formatCurrency(order.totalPrice)}</span>
+                  <span>{fmt(order.totalPrice)}</span>
                 </div>
               </div>
             </div>

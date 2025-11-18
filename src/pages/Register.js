@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
+import AnimatedSection from '../components/AnimatedSection';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
+import { useToast } from '../context/ToastContext';
 
 const Register = () => {
   const [formData, setFormData] = useState({ name: '', email: '', password: '', confirmPassword: '' });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
   const [step, setStep] = useState('register'); // 'register' | 'verify'
   const [verificationCode, setVerificationCode] = useState('');
   const [pendingEmail, setPendingEmail] = useState('');
@@ -18,6 +18,7 @@ const Register = () => {
   const [pwdStrength, setPwdStrength] = useState({ score: 0, label: 'Very weak', color: 'danger' });
   const { register, refreshUser } = useAuth();
   const navigate = useNavigate();
+  const toast = useToast();
 
   const handleChange = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -66,11 +67,10 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
-    setSuccessMessage('');
+    
 
     if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
+      toast.error('Passwords do not match');
       return;
     }
 
@@ -78,14 +78,14 @@ const Register = () => {
 
     try {
       const response = await register(formData.name, formData.email, formData.password);
-      setSuccessMessage(response.message || 'Account created successfully. Please verify your email.');
+      toast.success(response.message || 'Account created successfully. Please verify your email.');
       setPendingEmail(formData.email);
       // Move to verification step; keep email visible but clear passwords
       setFormData((prev) => ({ ...prev, password: '', confirmPassword: '' }));
       setStep('verify');
     } catch (err) {
       const message = err.response?.data?.message || 'Unable to create account.';
-      setError(message);
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -93,11 +93,10 @@ const Register = () => {
 
   const handleVerify = async (e) => {
     if (e) e.preventDefault();
-    setError('');
-    setSuccessMessage('');
+    
 
     if (!pendingEmail || verificationCode.trim().length !== 6) {
-      setError('Enter the 6-digit code sent to your email.');
+      toast.error('Enter the 6-digit code sent to your email.');
       return;
     }
 
@@ -106,12 +105,12 @@ const Register = () => {
       await api.post('/auth/verify-email', { email: pendingEmail, token: verificationCode.trim() });
       // Load the now-verified user into context
       await refreshUser();
-      setSuccessMessage('Email verified! Redirecting to your dashboard...');
+      toast.success('Email verified! Redirecting to your dashboard...');
       // Redirect shortly after success
       setTimeout(() => navigate('/profile'), 700);
     } catch (err) {
       const message = err.response?.data?.message || 'Verification failed. Please try again.';
-      setError(message);
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -128,14 +127,12 @@ const Register = () => {
   const handleResend = async () => {
     if (!pendingEmail) return;
     setResendLoading(true);
-    setError('');
-    setSuccessMessage('');
     try {
       await api.post('/auth/reset-verification', { email: pendingEmail });
-      setSuccessMessage('A new verification code has been sent to your email.');
+      toast.success('A new verification code has been sent to your email.');
     } catch (err) {
       const message = err.response?.data?.message || 'Unable to resend code. Try again later.';
-      setError(message);
+      toast.error(message);
     } finally {
       setResendLoading(false);
     }
@@ -143,7 +140,14 @@ const Register = () => {
 
   return (
     <Layout>
-      <div className="container py-5" style={{ marginTop: '120px' }}>
+      <AnimatedSection className="container-fluid page-header py-5" animationClass="animate-fade-up">
+        <h1 className="text-center text-white display-6">Create Account</h1>
+        <ol className="breadcrumb justify-content-center mb-0">
+          <li className="breadcrumb-item"><a href="/">Home</a></li>
+          <li className="breadcrumb-item active text-white">Register</li>
+        </ol>
+      </AnimatedSection>
+      <AnimatedSection className="container py-5" animationClass="animate-fade-up">
         <div className="row justify-content-center">
           <div className="col-lg-6">
             <div className="card shadow-sm border-0">
@@ -160,17 +164,7 @@ const Register = () => {
                   </>
                 )}
 
-                {error && (
-                  <div className="alert alert-danger" role="alert">
-                    {error}
-                  </div>
-                )}
 
-                {successMessage && (
-                  <div className="alert alert-success" role="alert">
-                    {successMessage}
-                  </div>
-                )}
 
                 {step === 'register' ? (
                   <>
@@ -268,7 +262,7 @@ const Register = () => {
                         </div>
                       </div>
 
-                      <button type="submit" className="btn btn-primary w-100" disabled={loading}>
+                      <button type="submit" className="btn btn-primary w-100 btn-glow" disabled={loading}>
                         {loading ? 'Creating account...' : 'Create Account'}
                       </button>
                     </form>
@@ -299,7 +293,7 @@ const Register = () => {
                         <div className="form-text">Code expires in 24 hours.</div>
                       </div>
 
-                      <button type="submit" className="btn btn-primary w-100" disabled={loading}>
+                      <button type="submit" className="btn btn-primary w-100 btn-glow" disabled={loading}>
                         {loading ? 'Verifying...' : 'Verify & Continue'}
                       </button>
                     </form>
@@ -327,7 +321,7 @@ const Register = () => {
             </div>
           </div>
         </div>
-      </div>
+      </AnimatedSection>
     </Layout>
   );
 };

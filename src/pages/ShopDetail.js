@@ -1,9 +1,12 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import Layout from '../components/Layout';
+import AnimatedSection from '../components/AnimatedSection';
+import { formatCurrency } from '../utils/currency';
 import { productService } from '../services';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 
 const ShopDetail = () => {
   const { id } = useParams();
@@ -13,16 +16,11 @@ const ShopDetail = () => {
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [reviewForm, setReviewForm] = useState({ rating: 5, comment: '' });
   const [reviewSubmitting, setReviewSubmitting] = useState(false);
-  const [reviewMessage, setReviewMessage] = useState('');
-  const [reviewError, setReviewError] = useState('');
   const { addToCart } = useCart();
   const { isAuthenticated } = useAuth();
+  const toast = useToast();
 
-  useEffect(() => {
-    fetchProduct();
-  }, [id]);
-
-  const fetchProduct = async () => {
+  const fetchProduct = useCallback(async () => {
     try {
       const response = await productService.getById(id);
       setProduct(response.product);
@@ -36,7 +34,11 @@ const ShopDetail = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    fetchProduct();
+  }, [fetchProduct]);
 
   const fetchRelated = async (categoryId, currentProductId) => {
     try {
@@ -52,10 +54,10 @@ const ShopDetail = () => {
   const handleAddToCart = async () => {
     try {
       await addToCart(product._id, quantity);
-      alert('Product added to cart!');
+      toast.success('Product added to cart!');
     } catch (error) {
       console.error('Failed to add to cart:', error);
-      alert('Failed to add product to cart');
+      toast.error('Failed to add product to cart');
     }
   };
 
@@ -68,19 +70,17 @@ const ShopDetail = () => {
     e.preventDefault();
     if (!product) return;
     setReviewSubmitting(true);
-    setReviewError('');
-    setReviewMessage('');
     try {
       await productService.addReview(product._id, {
         rating: Number(reviewForm.rating),
         comment: reviewForm.comment,
       });
-      setReviewMessage('Review submitted!');
+      toast.success('Review submitted!');
       setReviewForm({ rating: 5, comment: '' });
       await fetchProduct();
     } catch (error) {
       const message = error.response?.data?.message || 'Unable to submit review.';
-      setReviewError(message);
+      toast.error(message);
     } finally {
       setReviewSubmitting(false);
     }
@@ -113,7 +113,7 @@ const ShopDetail = () => {
   return (
     <Layout>
       {/* Single Product Start */}
-      <div className="container-fluid py-5 mt-5">
+      <AnimatedSection className="container-fluid py-5 mt-5" animationClass="animate-fade-up">
         <div className="container py-5">
           <div className="row g-4 mb-5">
             <div className="col-lg-8 col-xl-9">
@@ -131,7 +131,7 @@ const ShopDetail = () => {
                   <h4 className="fw-bold mb-3">{product.name}</h4>
                   <p className="mb-2"><strong>Brand:</strong> {product.brand || 'Raddazle'}</p>
                   <p className="mb-3"><strong>Category:</strong> {product.category?.name || 'N/A'}</p>
-                  <h5 className="fw-bold mb-3">${product.price}</h5>
+                  <h5 className="fw-bold mb-3">{formatCurrency(product.price)}</h5>
                   <div className="d-flex mb-4">
                     <i className="fa fa-star text-secondary"></i>
                     <i className="fa fa-star text-secondary"></i>
@@ -169,9 +169,9 @@ const ShopDetail = () => {
                       </div>
                       <button 
                         onClick={handleAddToCart}
-                        className="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary"
+                        className="btn btn-primary btn-glow rounded-pill px-4 py-2 mb-4"
                       >
-                        <i className="fa fa-shopping-bag me-2 text-primary"></i> Add to cart
+                        <i className="fa fa-shopping-bag me-2"></i> Add to Cart
                       </button>
                     </>
                   ) : (
@@ -198,11 +198,11 @@ const ShopDetail = () => {
             </div>
           </div>
         </div>
-      </div>
+      </AnimatedSection>
       {/* Single Product End */}
 
       {/* Product Reviews Start */}
-      <div className="container py-5">
+      <AnimatedSection className="container py-5" animationClass="animate-fade-up">
         <div className="row g-5">
           <div className="col-lg-7">
             <div className="card shadow-sm border-0">
@@ -239,8 +239,7 @@ const ShopDetail = () => {
                   </p>
                 ) : (
                   <form onSubmit={handleAddReview}>
-                    {reviewMessage && <div className="alert alert-success">{reviewMessage}</div>}
-                    {reviewError && <div className="alert alert-danger">{reviewError}</div>}
+                    
                     <div className="mb-3">
                       <label htmlFor="rating" className="form-label">Rating</label>
                       <select
@@ -269,7 +268,7 @@ const ShopDetail = () => {
                     </div>
                     <button
                       type="submit"
-                      className="btn btn-primary w-100"
+                      className="btn btn-primary w-100 btn-glow"
                       disabled={reviewSubmitting}
                     >
                       {reviewSubmitting ? 'Submitting…' : 'Submit Review'}
@@ -280,11 +279,11 @@ const ShopDetail = () => {
             </div>
           </div>
         </div>
-      </div>
+      </AnimatedSection>
       {/* Product Reviews End */}
 
       {/* Related Products Start */}
-      <div className="container pb-5">
+      <AnimatedSection className="container pb-5" animationClass="animate-fade-up">
         <h3 className="mb-4">Related products</h3>
         {relatedProducts.length === 0 ? (
           <p className="text-muted">No similar items to show right now.</p>
@@ -301,7 +300,7 @@ const ShopDetail = () => {
                   />
                   <div className="card-body d-flex flex-column">
                     <h6 className="fw-semibold">{item.name}</h6>
-                    <p className="text-muted small mb-2">${item.price}</p>
+                    <p className="text-muted small mb-2">{formatCurrency(item.price)}</p>
                     <Link to={`/shop/${item._id}`} className="stretched-link">View details</Link>
                   </div>
                 </div>
@@ -309,7 +308,7 @@ const ShopDetail = () => {
             ))}
           </div>
         )}
-      </div>
+      </AnimatedSection>
       {/* Related Products End */}
     </Layout>
   );

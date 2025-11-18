@@ -1,7 +1,5 @@
 import axios from 'axios';
 
-// Prefer explicit API URL via env var, fallback to same-origin '/api'.
-// If a URL is provided without "/api", append it to match backend route prefix.
 const raw = process.env.REACT_APP_API_URL;
 let baseURL = '/api';
 if (raw && typeof raw === 'string') {

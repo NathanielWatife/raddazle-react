@@ -1,8 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
+import AnimatedSection from '../components/AnimatedSection';
 import { userService, authService } from '../services';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
+import { useConfirm } from '../context/ConfirmContext';
 
 const emptyAddress = {
   street: '',
@@ -19,16 +22,13 @@ const Profile = () => {
   const [addressForm, setAddressForm] = useState(emptyAddress);
   const [addressType, setAddressType] = useState('shipping');
   const [pageLoading, setPageLoading] = useState(true);
-  const [status, setStatus] = useState({ type: '', message: '' });
   const [resendLoading, setResendLoading] = useState(false);
   const navigate = useNavigate();
   const { refreshUser, logout } = useAuth();
+  const toast = useToast();
+  const confirm = useConfirm();
 
-  useEffect(() => {
-    loadProfile();
-  }, []);
-
-  const loadProfile = async () => {
+  const loadProfile = useCallback(async () => {
     try {
       setPageLoading(true);
       const response = await userService.getProfile();
@@ -42,11 +42,15 @@ const Profile = () => {
       });
     } catch (error) {
       const message = error.response?.data?.message || 'Unable to load profile.';
-      setStatus({ type: 'error', message });
+      toast.error(message);
     } finally {
       setPageLoading(false);
     }
-  };
+  }, [toast]);
+
+  useEffect(() => {
+    loadProfile();
+  }, [loadProfile]);
 
   const handleAccountChange = (e) => {
     const { name, value } = e.target;
@@ -69,11 +73,11 @@ const Profile = () => {
       const response = await userService.updateProfile(payload);
       setProfile((prev) => (prev ? { ...prev, ...response.user } : response.user));
       setAccountForm((prev) => ({ ...prev, password: '' }));
-      setStatus({ type: 'success', message: 'Profile updated successfully.' });
+      toast.success('Profile updated successfully.');
       await refreshUser();
     } catch (error) {
       const message = error.response?.data?.message || 'Failed to update profile.';
-      setStatus({ type: 'error', message });
+      toast.error(message);
     }
   };
 
@@ -91,36 +95,43 @@ const Profile = () => {
       const key = addressType === 'shipping' ? 'shippingAddress' : 'billingAddress';
       setProfile((prev) => (prev ? { ...prev, [key]: response[key] } : prev));
       setAddressForm(emptyAddress);
-      setStatus({ type: 'success', message: `${addressType} address saved.` });
+      toast.success(`${addressType} address saved.`);
     } catch (error) {
       const message = error.response?.data?.message || 'Failed to save address.';
-      setStatus({ type: 'error', message });
+      toast.error(message);
     }
   };
 
   const handleAddressDelete = async (type, addressId) => {
+    const ok = await confirm({
+      title: 'Remove address?',
+      message: 'This action cannot be undone.',
+      variant: 'danger',
+      okText: 'Remove',
+      cancelText: 'Cancel',
+    });
+    if (!ok) return;
     try {
       const response = await userService.deleteAddress(type, addressId);
       const key = type === 'shipping' ? 'shippingAddress' : 'billingAddress';
       setProfile((prev) => (prev ? { ...prev, [key]: response[key] } : prev));
-      setStatus({ type: 'success', message: 'Address removed.' });
+      toast.success('Address removed.');
     } catch (error) {
       const message = error.response?.data?.message || 'Failed to remove address.';
-      setStatus({ type: 'error', message });
+      toast.error(message);
     }
   };
 
   const handleResendVerification = async () => {
     if (!profile?.email) return;
-    setStatus({ type: '', message: '' });
     setResendLoading(true);
     try {
       const response = await authService.resendVerification(profile.email);
       const message = response.message || 'Verification email sent. Please check your inbox.';
-      setStatus({ type: 'success', message });
+      toast.success(message);
     } catch (error) {
       const message = error.response?.data?.message || 'Unable to send verification email right now.';
-      setStatus({ type: 'error', message });
+      toast.error(message);
     } finally {
       setResendLoading(false);
     }
@@ -131,10 +142,10 @@ const Profile = () => {
       const response = await userService.updateAddress(type, addressId, { isDefault: true });
       const key = type === 'shipping' ? 'shippingAddress' : 'billingAddress';
       setProfile((prev) => (prev ? { ...prev, [key]: response[key] } : prev));
-      setStatus({ type: 'success', message: 'Default address updated.' });
+      toast.success('Default address updated.');
     } catch (error) {
       const message = error.response?.data?.message || 'Failed to update address.';
-      setStatus({ type: 'error', message });
+      toast.error(message);
     }
   };
 
@@ -190,7 +201,14 @@ const Profile = () => {
 
   return (
     <Layout>
-      <div className="container py-5" style={{ marginTop: '120px' }}>
+      <AnimatedSection className="container-fluid page-header py-5" animationClass="animate-fade-up">
+        <h1 className="text-center text-white display-6">My Profile</h1>
+        <ol className="breadcrumb justify-content-center mb-0">
+          <li className="breadcrumb-item"><a href="/">Home</a></li>
+          <li className="breadcrumb-item active text-white">Profile</li>
+        </ol>
+      </AnimatedSection>
+      <AnimatedSection className="container py-5" animationClass="animate-fade-up">
         <div className="row mb-4">
           <div className="col-12">
             <h1 className="h3">My Profile</h1>
@@ -198,15 +216,11 @@ const Profile = () => {
           </div>
         </div>
 
-        {status.message && (
-          <div className={`alert alert-${status.type === 'error' ? 'danger' : 'success'}`} role="alert">
-            {status.message}
-          </div>
-        )}
+        
 
         <div className="row g-4">
           <div className="col-lg-5">
-            <div className="card shadow-sm border-0 h-100">
+            <div className="card shadow-sm border-0 h-100 hover-lift">
               <div className="card-body">
                 <div className="d-flex align-items-center mb-3">
                   <div className="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style={{ width: '56px', height: '56px' }}>
@@ -298,7 +312,7 @@ const Profile = () => {
                     />
                   </div>
 
-                  <button type="submit" className="btn btn-primary w-100">
+                  <button type="submit" className="btn btn-primary w-100 btn-glow">
                     Save changes
                   </button>
                   <hr className="my-4" />
@@ -315,7 +329,7 @@ const Profile = () => {
           </div>
 
           <div className="col-lg-7">
-            <div className="card shadow-sm border-0 mb-4">
+            <div className="card shadow-sm border-0 mb-4 hover-lift">
               <div className="card-body">
                 <div className="d-flex justify-content-between align-items-center mb-3">
                   <h5 className="mb-0">Saved addresses</h5>
@@ -420,7 +434,7 @@ const Profile = () => {
                       </div>
                     </div>
                     <div className="col-12">
-                      <button type="submit" className="btn btn-outline-primary w-100">
+                      <button type="submit" className="btn btn-primary w-100 btn-glow">
                         Save {addressType} address
                       </button>
                     </div>
@@ -429,7 +443,7 @@ const Profile = () => {
               </div>
             </div>
 
-            <div className="card shadow-sm border-0">
+            <div className="card shadow-sm border-0 hover-lift">
               <div className="card-body">
                 <h5 className="mb-3 text-capitalize">{addressType} address book</h5>
                 {addressType === 'shipping'
@@ -439,7 +453,7 @@ const Profile = () => {
             </div>
           </div>
         </div>
-      </div>
+      </AnimatedSection>
     </Layout>
   );
 };

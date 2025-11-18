@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { orderService } from '../../services';
 import ProtectedRoute from '../../components/ProtectedRoute';
 import AdminRoute from '../../components/AdminRoute';
@@ -10,12 +10,12 @@ const statusOptions = ['pending','processing','shipped','delivered','cancelled']
 const OrdersAdmin = () => {
   const [data, setData] = useState({ orders: [], page: 1, pages: 1, count: 0 });
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [, setError] = useState('');
   const [shipForms, setShipForms] = useState({});
   const [shipModalOrder, setShipModalOrder] = useState(null);
   const toast = useToast();
 
-  const fetchOrders = async (page = 1) => {
+  const fetchOrders = useCallback(async (page = 1) => {
     setLoading(true);
     setError('');
     try {
@@ -27,9 +27,9 @@ const OrdersAdmin = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [toast]);
 
-  useEffect(() => { fetchOrders(); }, []);
+  useEffect(() => { fetchOrders(); }, [fetchOrders]);
 
   const onUpdateStatus = async (id, status) => {
     await orderService.updateStatus(id, status);
@@ -87,7 +87,7 @@ const OrdersAdmin = () => {
                 <tr>
                   <td className="truncate">{o._id}</td>
                   <td>{o.user?.name || '-'}</td>
-                  <td>${o.totalPrice?.toFixed(2)}</td>
+                  <td>{new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN' }).format(Number(o.totalPrice) || 0)}</td>
                   <td>
                     <select className="form-select form-select-sm" value={o.status}
                       onChange={(e) => onUpdateStatus(o._id, e.target.value)}>

@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useToast } from '../../context/ToastContext';
 
 const AdminLogin = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
   const { login, isAuthenticated, isAdmin, refreshUser } = useAuth();
   const navigate = useNavigate();
+  const toast = useToast();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -16,7 +17,6 @@ const AdminLogin = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
 
     try {
       const response = await login(formData.email, formData.password);
@@ -31,11 +31,11 @@ const AdminLogin = () => {
       if (role === 'admin' || role === 'super-admin') {
         navigate('/admin/dashboard', { replace: true });
       } else {
-        setError('Access denied. Admin privileges required.');
+        toast.error('Access denied. Admin privileges required.');
       }
     } catch (error) {
       console.error('Login failed:', error);
-      setError(error.response?.data?.message || 'Login failed. Please check your credentials.');
+      toast.error(error.response?.data?.message || 'Login failed. Please check your credentials.');
     } finally {
       setLoading(false);
     }
@@ -58,11 +58,7 @@ const AdminLogin = () => {
                 <h2 className="text-primary">Admin Login</h2>
                 <p className="text-muted">Sign in to access admin dashboard</p>
               </div>
-              {error && (
-                <div className="alert alert-danger" role="alert">
-                  {error}
-                </div>
-              )}
+              
               <form onSubmit={handleSubmit}>
                 <div className="mb-3">
                   <label htmlFor="email" className="form-label">Email address</label>

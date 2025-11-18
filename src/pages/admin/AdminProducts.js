@@ -1,7 +1,9 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import { productService, uploadService, categoryService } from '../../services';
 import { Link } from 'react-router-dom';
+import { useToast } from '../../context/ToastContext';
+import { useConfirm } from '../../context/ConfirmContext';
 
 const emptyForm = { name: '', price: '', brand: '', category: '', image: '', description: '', countInStock: 0, isFeatured: false };
 
@@ -10,7 +12,7 @@ const AdminProducts = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [page, setPage] = useState(1);
-  const [pages, setPages] = useState(1);
+  // pagination total pages not currently displayed; track current page only
   const [keyword, setKeyword] = useState('');
   const [formOpen, setFormOpen] = useState(false);
   const [form, setForm] = useState(emptyForm);
@@ -19,23 +21,25 @@ const AdminProducts = () => {
   const [bulkDelta, setBulkDelta] = useState(0);
   const [uploading, setUploading] = useState(false);
   const [categories, setCategories] = useState([]);
+  const toast = useToast();
+  const confirm = useConfirm();
 
-  const fetchProducts = async (p = 1) => {
+  const fetchProducts = useCallback(async (p = 1) => {
     setLoading(true);
     setError('');
     try {
       const res = await productService.getAll({ page: p, pageSize: 10, keyword });
       setProducts(res.products || []);
       setPage(res.page || 1);
-      setPages(res.pages || 1);
+      // pages count is not displayed in UI currently
     } catch (e) {
       setError(e.response?.data?.message || e.message);
     } finally {
       setLoading(false);
     }
-  };
+  }, [keyword]);
 
-  useEffect(() => { fetchProducts(1); }, []);
+  useEffect(() => { fetchProducts(1); }, [fetchProducts]);
 
   useEffect(() => {
     const loadCategories = async () => {
@@ -77,9 +81,11 @@ const AdminProducts = () => {
   };
 
   const onDelete = async (id) => {
-    if (!window.confirm('Delete this product?')) return;
+    const ok = await confirm({ title: 'Delete product?', message: 'This action cannot be undone.', variant: 'danger', okText: 'Delete' });
+    if (!ok) return;
     await productService.delete(id);
     await fetchProducts(page);
+    toast.success('Product deleted.');
   };
 
   const onSave = async (e) => {
@@ -98,6 +104,7 @@ const AdminProducts = () => {
     setEditingId(null);
     setForm(emptyForm);
     await fetchProducts(page);
+    toast.success('Product saved.');
   };
 
   const onImageSelect = async (e) => {
@@ -111,7 +118,7 @@ const AdminProducts = () => {
         setForm((prev) => ({ ...prev, image: url }));
       }
     } catch (err) {
-      alert(err.response?.data?.message || 'Failed to upload image');
+      toast.error(err.response?.data?.message || 'Failed to upload image');
     } finally {
       setUploading(false);
     }
@@ -129,13 +136,15 @@ const AdminProducts = () => {
   const onBulkAdjust = async () => {
     const delta = parseInt(bulkDelta, 10);
     if (!delta || selected.length === 0) return;
-    if (!window.confirm(`Adjust stock by ${delta} for ${selected.length} product(s)?`)) return;
+    const ok = await confirm({ title: 'Adjust inventory?', message: `Adjust stock by ${delta} for ${selected.length} product(s)?`, variant: 'warning', okText: 'Apply' });
+    if (!ok) return;
     for (const id of selected) {
       await productService.adjustInventory(id, { delta, reason: 'manual-adjustment', note: 'Bulk update' });
     }
     setSelected([]);
     setBulkDelta(0);
     await fetchProducts(page);
+    toast.success('Inventory adjusted.');
   };
 
   return (
@@ -158,7 +167,7 @@ const AdminProducts = () => {
       {loading ? (
         <div className="text-center py-5"><div className="spinner-border" /></div>
       ) : error ? (
-        <div className="alert alert-danger">{error}</div>
+        <p className="text-danger small">{error}</p>
       ) : (
         <div className="table-responsive">
           <table className="table table-striped table-sm">
@@ -182,7 +191,7 @@ const AdminProducts = () => {
                     <input type="checkbox" checked={selected.includes(p._id)} onChange={()=>toggleSelect(p._id)} />
                   </td>
                   <td>{p.name}</td>
-                  <td>${Number(p.price).toFixed(2)}</td>
+                  <td>{new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN' }).format(Number(p.price) || 0)}</td>
                   <td>{p.countInStock}</td>
                   <td className="col-optional">{p.brand}</td>
                   <td className="col-optional">{p.isFeatured ? 'Yes' : 'No'}</td>

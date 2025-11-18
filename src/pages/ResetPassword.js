@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import Layout from '../components/Layout';
+import AnimatedSection from '../components/AnimatedSection';
 import { authService } from '../services';
+import { useToast } from '../context/ToastContext';
 
 const ResetPassword = () => {
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const [form, setForm] = useState({ email: '', verificationCode: '', password: '' });
-  const [status, setStatus] = useState({ type: '', message: '' });
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [pwdStrength, setPwdStrength] = useState({ score: 0, label: 'Very weak', color: 'danger' });
+  const toast = useToast();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -60,15 +62,14 @@ const ResetPassword = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setStatus({ type: '', message: '' });
     setLoading(true);
     try {
       await authService.resetPassword(form);
-      setStatus({ type: 'success', message: 'Password successfully reset. Redirecting to login…' });
+      toast.success('Password successfully reset. Redirecting to login…');
       setTimeout(() => navigate('/login'), 1800);
     } catch (error) {
       const message = error.response?.data?.message || 'Unable to reset password. Please try again.';
-      setStatus({ type: 'error', message });
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -88,14 +89,17 @@ const ResetPassword = () => {
 
   return (
     <Layout>
-      <div className="container py-5" style={{ marginTop: '120px', maxWidth: 600 }}>
+      <AnimatedSection className="container-fluid page-header py-5" animationClass="animate-fade-up">
+        <h1 className="text-center text-white display-6">Reset Password</h1>
+        <ol className="breadcrumb justify-content-center mb-0">
+          <li className="breadcrumb-item"><a href="/">Home</a></li>
+          <li className="breadcrumb-item active text-white">Reset Password</li>
+        </ol>
+      </AnimatedSection>
+      <AnimatedSection className="container py-5" style={{ maxWidth: 600 }} animationClass="animate-fade-up">
         <h1 className="h3 mb-3">Reset password</h1>
         <p className="text-muted mb-4">Enter the verification code from your email and choose a new password.</p>
-        {status.message && (
-          <div className={`alert alert-${status.type === 'success' ? 'success' : 'danger'}`}>
-            {status.message}
-          </div>
-        )}
+        
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
             <label htmlFor="email" className="form-label">Email address</label>
@@ -165,14 +169,14 @@ const ResetPassword = () => {
               <small className={`text-${pwdStrength.color}`}>{pwdStrength.label}</small>
             </div>
           </div>
-          <button className="btn btn-primary w-100" type="submit" disabled={loading}>
+          <button className="btn btn-primary w-100 btn-glow" type="submit" disabled={loading}>
             {loading ? 'Updating…' : 'Reset password'}
           </button>
         </form>
         <div className="text-center mt-4">
           <Link to="/login">Back to login</Link>
         </div>
-      </div>
+      </AnimatedSection>
     </Layout>
   );
 };

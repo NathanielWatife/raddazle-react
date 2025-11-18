@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { adminService, categoryService, uploadService } from '../../services';
 import AdminLayout from '../../components/admin/AdminLayout';
+import { useToast } from '../../context/ToastContext';
+import { useConfirm } from '../../context/ConfirmContext';
 
 const AdminDashboard = () => {
-  const { user, isAdmin } = useAuth();
+  const { isAdmin } = useAuth();
   const navigate = useNavigate();
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -16,17 +18,10 @@ const AdminDashboard = () => {
   const [editingCat, setEditingCat] = useState(null);
   const [catForm, setCatForm] = useState({ name: '', description: '', image: '', isActive: true });
   const [catUploading, setCatUploading] = useState(false);
+  const toast = useToast();
+  const confirm = useConfirm();
 
-  useEffect(() => {
-    if (!isAdmin) {
-      navigate('/admin/login');
-      return;
-    }
-    fetchDashboard();
-    fetchCategories();
-  }, [isAdmin, navigate]);
-
-  const fetchDashboard = async () => {
+  const fetchDashboard = useCallback(async () => {
     try {
       const response = await adminService.getDashboard();
       setStats(response.stats);
@@ -38,20 +33,31 @@ const AdminDashboard = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [navigate]);
 
-  const fetchCategories = async () => {
+  const fetchCategories = useCallback(async () => {
     setCatLoading(true);
     setCatError('');
     try {
       const res = await categoryService.getAll();
       setCategories(res.categories || []);
     } catch (e) {
-      setCatError(e.response?.data?.message || e.message);
+      const msg = e.response?.data?.message || e.message;
+      setCatError(msg);
+      toast.error(msg);
     } finally {
       setCatLoading(false);
     }
-  };
+  }, [toast]);
+
+  useEffect(() => {
+    if (!isAdmin) {
+      navigate('/admin/login');
+      return;
+    }
+    fetchDashboard();
+    fetchCategories();
+  }, [isAdmin, navigate, fetchDashboard, fetchCategories]);
 
   const openCreateCategory = () => {
     setEditingCat(null);
@@ -81,8 +87,9 @@ const AdminDashboard = () => {
       setCatModalOpen(false);
       setEditingCat(null);
       await fetchCategories();
+      toast.success('Category saved.');
     } catch (e) {
-      alert(e.response?.data?.message || 'Failed to save category');
+      toast.error(e.response?.data?.message || 'Failed to save category');
     }
   };
 
@@ -90,7 +97,7 @@ const AdminDashboard = () => {
     const file = e.target.files?.[0];
     if (!file) return;
     if (!file.type.startsWith('image/')) {
-      alert('Please select an image file');
+      toast.error('Please select an image file');
       return;
     }
     try {
@@ -101,7 +108,7 @@ const AdminDashboard = () => {
       if (!url) throw new Error('Upload failed: no URL returned');
       setCatForm(prev => ({ ...prev, image: url }));
     } catch (err) {
-      alert(err.response?.data?.message || err.message || 'Image upload failed');
+      toast.error(err.response?.data?.message || err.message || 'Image upload failed');
     } finally {
       setCatUploading(false);
       // reset the input value to allow same file reselect
@@ -113,18 +120,21 @@ const AdminDashboard = () => {
     try {
       await categoryService.update(cat._id, { isActive: !cat.isActive });
       await fetchCategories();
+      toast.success('Category updated.');
     } catch (e) {
-      alert(e.response?.data?.message || 'Failed to update category');
+      toast.error(e.response?.data?.message || 'Failed to update category');
     }
   };
 
   const deleteCategory = async (cat) => {
-    if (!window.confirm(`Delete category "${cat.name}"?`)) return;
+    const ok = await confirm({ title: 'Delete category?', message: `Delete "${cat.name}" permanently?`, variant: 'danger', okText: 'Delete' });
+    if (!ok) return;
     try {
       await categoryService.remove(cat._id);
       await fetchCategories();
+      toast.success('Category deleted.');
     } catch (e) {
-      alert(e.response?.data?.message || 'Failed to delete category');
+      toast.error(e.response?.data?.message || 'Failed to delete category');
     }
   };
 
@@ -139,9 +149,9 @@ const AdminDashboard = () => {
   }
 
   const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('en-NG', {
       style: 'currency',
-      currency: 'USD'
+      currency: 'NGN'
     }).format(amount || 0);
   };
 
@@ -196,7 +206,7 @@ const AdminDashboard = () => {
         <h2 className="mb-0">Categories</h2>
         <button className="btn btn-sm btn-primary" onClick={openCreateCategory}><i className="fas fa-plus me-1"></i>Add Category</button>
       </div>
-      {catError && <div className="alert alert-danger">{catError}</div>}
+      {catError && <p className="text-danger small">{catError}</p>}
       <div className="table-responsive">
         <table className="table table-striped table-sm">
           <thead>

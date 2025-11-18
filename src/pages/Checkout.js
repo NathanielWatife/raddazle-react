@@ -1,7 +1,9 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
+import AnimatedSection from '../components/AnimatedSection';
 import { useCart } from '../context/CartContext';
+import { formatCurrency } from '../utils/currency';
 import { orderService, paymentService } from '../services';
 import { useToast } from '../context/ToastContext';
 
@@ -164,8 +166,16 @@ const Checkout = () => {
 
   return (
     <Layout>
+      <AnimatedSection className="container-fluid page-header py-5" animationClass="animate-fade-up">
+        <h1 className="text-center text-white display-6">Checkout</h1>
+        <ol className="breadcrumb justify-content-center mb-0">
+          <li className="breadcrumb-item"><a href="/">Home</a></li>
+          <li className="breadcrumb-item"><a href="/cart">Cart</a></li>
+          <li className="breadcrumb-item active text-white">Checkout</li>
+        </ol>
+      </AnimatedSection>
       {/* Checkout Page Start */}
-      <div className="container-fluid py-5">
+      <AnimatedSection className="container-fluid py-5" animationClass="animate-fade-up">
         <div className="container py-5">
           <h1 className="mb-4">Billing details</h1>
           <form onSubmit={handleSubmit}>
@@ -314,9 +324,9 @@ const Checkout = () => {
                             </div>
                           </th>
                           <td className="py-5">{item.product.name}</td>
-                          <td className="py-5">${item.product.price.toFixed(2)}</td>
+                          <td className="py-5">{formatCurrency(item.product.price)}</td>
                           <td className="py-5">{item.quantity}</td>
-                          <td className="py-5">${(item.product.price * item.quantity).toFixed(2)}</td>
+                          <td className="py-5">{formatCurrency(item.product.price * item.quantity)}</td>
                         </tr>
                       ))}
                       <tr>
@@ -328,7 +338,7 @@ const Checkout = () => {
                         </td>
                         <td className="py-5">
                           <div className="py-3 border-bottom border-top">
-                            <p className="mb-0 text-dark">${getCartTotal().toFixed(2)}</p>
+                            <p className="mb-0 text-dark">{formatCurrency(getCartTotal())}</p>
                           </div>
                         </td>
                       </tr>
@@ -358,7 +368,7 @@ const Checkout = () => {
                               name="Shipping-2"
                             />
                             <label className="form-check-label" htmlFor="Shipping-2">
-                              Flat rate: $15.00
+                              Flat rate: {formatCurrency(15)}
                             </label>
                           </div>
                         </td>
@@ -372,7 +382,7 @@ const Checkout = () => {
                         <td className="py-5"></td>
                         <td className="py-5">
                           <div className="py-3 border-bottom border-top">
-                            <p className="mb-0 text-dark">${getCartTotal().toFixed(2)}</p>
+                            <p className="mb-0 text-dark">{formatCurrency(getCartTotal())}</p>
                           </div>
                         </td>
                       </tr>
@@ -415,7 +425,7 @@ const Checkout = () => {
                 <div className="row g-4 text-center align-items-center justify-content-center pt-4">
                   <button
                     type="submit"
-                    className="btn border-secondary py-3 px-4 text-uppercase w-100 text-primary"
+                    className="btn btn-primary py-3 px-4 text-uppercase w-100 btn-glow"
                     disabled={loading}
                   >
                     {loading ? 'Placing Order...' : 'Place Order'}
@@ -425,7 +435,7 @@ const Checkout = () => {
             </div>
           </form>
         </div>
-      </div>
+      </AnimatedSection>
       {/* Checkout Page End */}
     </Layout>
   );

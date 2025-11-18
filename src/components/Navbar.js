@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
+import { categoryService } from '../services';
 
 const Navbar = () => {
   const { user, logout, isAuthenticated, isAdmin } = useAuth();
@@ -10,6 +11,25 @@ const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [navOpen, setNavOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 10);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const res = await categoryService.getAll({ includeCounts: true });
+        setCategories(res.categories || []);
+      } catch {}
+    };
+    loadCategories();
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -30,36 +50,36 @@ const Navbar = () => {
   };
 
   return (
-    <div className="container-fluid fixed-top">
-      <div className="container topbar bg-primary d-none d-lg-block">
-        <div className="d-flex justify-content-between">
-          <div className="top-info ps-2">
-            <small className="me-3">
-              <i className="fas fa-map-marker-alt me-2 text-secondary"></i>
-              <Link to="#" className="text-white">Lagos, Nigeria</Link>
-            </small>
-            <small className="me-3">
-              <i className="fas fa-envelope me-2 text-secondary"></i>
-              {/* <Link to="#" className="text-white">Email@Example.com</Link> */}
-            </small>
+    <div className={`container-fluid fixed-top ${scrolled ? 'is-scrolled' : ''}`}>
+          <div className="container topbar bg-primary d-none d-lg-block">
+            <div className="d-flex justify-content-between">
+              <div className="top-info ps-2">
+                <small className="me-3">
+                  <i className="fas fa-map-marker-alt me-2 text-secondary"></i>
+                  <Link to="#" className="text-white">Lagos, Nigeria</Link>
+                </small>
+                <small className="me-3">
+                  <i className="fas fa-envelope me-2 text-secondary"></i>
+                  <Link to="mailto:support@raddazle.com" className="text-white">support@raddazle.com</Link>
+                </small>
+              </div>
+              <div className="top-link pe-2">
+                <Link to="/privacy" className="text-white">
+                  <small className="text-white mx-2">Privacy Policy</small>/
+                </Link>
+                <Link to="/terms" className="text-white">
+                  <small className="text-white mx-2">Terms &amp; Conditions</small>/
+                </Link>
+                <Link to="/return" className="text-white">
+                  <small className="text-white ms-2">Returns &amp; Refunds</small>
+                </Link>
+              </div>
+            </div>
           </div>
-          <div className="top-link pe-2">
-            <Link to="#" className="text-white">
-              <small className="text-white mx-2">Privacy Policy</small>/
-            </Link>
-            <Link to="#" className="text-white">
-              <small className="text-white mx-2">Terms of Use</small>/
-            </Link>
-            <Link to="#" className="text-white">
-              <small className="text-white ms-2">Sales and Refunds</small>
-            </Link>
-          </div>
-        </div>
-      </div>
       
       <div className="container px-0">
         <nav className="navbar navbar-light bg-white navbar-expand-lg">
-          <Link to="/" className="navbar-brand">
+          <Link to="/" className="navbar-brand hover-shine">
             <h1 className="text-primary display-6 brand-title">Raddazle</h1>
             <p className="text-muted mb-0 brand-subtitle" style={{ fontSize: '0.8rem', marginTop: '-8px' }}>Luxury Fragrances</p>
           </Link>
@@ -74,18 +94,35 @@ const Navbar = () => {
             <span className="fa fa-bars text-primary"></span>
           </button>
           <div className={`collapse navbar-collapse bg-white ${navOpen ? 'show' : ''}`} id="navbarCollapse">
-            <div className="navbar-nav mx-auto">
-              <Link to="/" className="nav-item nav-link active" onClick={() => setNavOpen(false)}>Home</Link>
-              <Link to="/shop" className="nav-item nav-link" onClick={() => setNavOpen(false)}>Shop</Link>
-              <Link to="/testimonial" className="nav-item nav-link" onClick={() => setNavOpen(false)}>Testimonials</Link>
-              <Link to="/contact" className="nav-item nav-link" onClick={() => setNavOpen(false)}>Contact</Link>
+            <div className="navbar-nav mx-auto nav-underline">
+              <NavLink to="/" end className={({ isActive }) => `nav-item nav-link ${isActive ? 'active' : ''}`} onClick={() => setNavOpen(false)}>Home</NavLink>
+              <div className="nav-item dropdown">
+                <NavLink to="/shop" className={({ isActive }) => `nav-link dropdown-toggle ${isActive ? 'active' : ''}`} role="button" data-bs-toggle="dropdown" aria-expanded="false" onClick={() => setNavOpen(false)}>
+                  Shop
+                </NavLink>
+                <ul className="dropdown-menu">
+                  <li><Link className="dropdown-item" to="/shop" onClick={() => setNavOpen(false)}>All Products</Link></li>
+                  <li><hr className="dropdown-divider" /></li>
+                  {categories.slice(0, 8).map(cat => (
+                    <li key={cat._id}>
+                      <Link className="dropdown-item" to={`/shop?category=${cat._id}`} onClick={() => setNavOpen(false)}>
+                        {cat.name} {typeof cat.productCount === 'number' ? `(${cat.productCount})` : ''}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <NavLink to="/about" className={({ isActive }) => `nav-item nav-link ${isActive ? 'active' : ''}`} onClick={() => setNavOpen(false)}>About</NavLink>
+              <NavLink to="/testimonial" className={({ isActive }) => `nav-item nav-link ${isActive ? 'active' : ''}`} onClick={() => setNavOpen(false)}>Testimonials</NavLink>
+              <NavLink to="/contact" className={({ isActive }) => `nav-item nav-link ${isActive ? 'active' : ''}`} onClick={() => setNavOpen(false)}>Contact</NavLink>
+              <NavLink to="/faq" className={({ isActive }) => `nav-item nav-link ${isActive ? 'active' : ''}`} onClick={() => setNavOpen(false)}>FAQs</NavLink>
               {isAuthenticated && isAdmin && (
-                <Link to="/admin/dashboard" className="nav-item nav-link" onClick={() => setNavOpen(false)}>Admin</Link>
+                <NavLink to="/admin/dashboard" className={({ isActive }) => `nav-item nav-link ${isActive ? 'active' : ''}`} onClick={() => setNavOpen(false)}>Admin</NavLink>
               )}
             </div>
             <div className="d-flex m-3 me-0 align-items-center gap-2 gap-lg-3">
               <button 
-                className="btn-search btn border border-secondary btn-md-square rounded-circle bg-white me-2 me-lg-4" 
+                className="btn-search btn border border-secondary btn-md-square rounded-circle bg-white me-2 me-lg-4 btn-glow" 
                 type="button"
                 onClick={() => setSearchOpen(true)}
               >
@@ -104,7 +141,7 @@ const Navbar = () => {
               {isAuthenticated && !isAdmin && (
                 <button
                   onClick={handleLogout}
-                  className="btn border border-secondary rounded-pill px-3 text-primary me-3 my-auto"
+                  className="btn border border-secondary rounded-pill px-3 text-primary me-3 my-auto btn-glow"
                   type="button"
                   title="Logout"
                 >
@@ -132,11 +169,11 @@ const Navbar = () => {
                 </div>
               ) : (
                 <div className="d-flex align-items-center gap-2">
-                  <Link to="/login" className="btn border border-secondary rounded-pill px-3 text-primary" onClick={() => setNavOpen(false)}>
+                  <Link to="/login" className="btn border border-secondary rounded-pill px-3 text-primary btn-glow" onClick={() => setNavOpen(false)}>
                     <i className="fas fa-user me-2 text-primary"></i> Login
                   </Link>
-                  <Link to="/register" className="btn btn-primary rounded-pill px-3 text-white" onClick={() => setNavOpen(false)}>
-                    Join
+                  <Link to="/register" className="btn btn-primary rounded-pill px-3 text-white btn-glow" onClick={() => setNavOpen(false)}>
+                    Sign Up
                   </Link>
                 </div>
               )}

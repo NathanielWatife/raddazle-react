@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { adminService } from '../../services';
 import AdminLayout from '../../components/admin/AdminLayout';
+import { useToast } from '../../context/ToastContext';
+import { useConfirm } from '../../context/ConfirmContext';
 
 const AdminUsers = () => {
   const { isAdmin } = useAuth();
@@ -19,6 +21,8 @@ const AdminUsers = () => {
   const [selectedUsers, setSelectedUsers] = useState([]);
   const { user } = useAuth();
   const isSuperAdmin = user?.role === 'super-admin';
+  const toast = useToast();
+  const confirm = useConfirm();
 
   useEffect(() => {
     if (!isAdmin) {
@@ -67,33 +71,35 @@ const AdminUsers = () => {
 
   const handleBulkAction = async (action) => {
     if (selectedUsers.length === 0) {
-      alert('Please select users first');
+      toast.info('Please select users first');
       return;
     }
 
-    if (!window.confirm(`Are you sure you want to ${action} ${selectedUsers.length} user(s)?`)) {
-      return;
-    }
+    const ok = await confirm({ title: `${action[0].toUpperCase()+action.slice(1)} users?`, message: `Apply ${action} to ${selectedUsers.length} user(s)?`, variant: action === 'delete' ? 'danger' : 'warning', okText: action[0].toUpperCase()+action.slice(1) });
+    if (!ok) return;
 
     try {
       await adminService.bulkAction(action, selectedUsers);
-      alert(`Successfully ${action}d users`);
+      toast.success(`Successfully ${action}d users`);
       setSelectedUsers([]);
       fetchUsers();
     } catch (error) {
       console.error('Bulk action failed:', error);
-      alert(`Failed to ${action} users`);
+      toast.error(`Failed to ${action} users`);
     }
   };
 
   const handleRoleChange = async (u, newRole) => {
     if (!isSuperAdmin) return;
-    if (u.role === 'super-admin' && user._id !== u._id && !window.confirm('Modify another super-admin?')) return;
+    if (u.role === 'super-admin' && user._id !== u._id) {
+      const ok = await confirm({ title: 'Modify super-admin?', message: 'Are you sure you want to change another super-admin\'s role?', variant: 'danger', okText: 'Proceed' });
+      if (!ok) return;
+    }
     try {
       await adminService.updateUser(u._id, { role: newRole });
       fetchUsers();
     } catch (e) {
-      alert(e.response?.data?.message || 'Failed to update role');
+      toast.error(e.response?.data?.message || 'Failed to update role');
     }
   };
 
@@ -109,7 +115,7 @@ const AdminUsers = () => {
       window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error('Export failed:', error);
-      alert('Failed to export users');
+      toast.error('Failed to export users');
     }
   };
 

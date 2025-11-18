@@ -1,7 +1,9 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
+import AnimatedSection from '../components/AnimatedSection';
 import { useCart } from '../context/CartContext';
+import { formatCurrency } from '../utils/currency';
 
 const Cart = () => {
   const { cart, updateCartItem, removeFromCart, getCartTotal } = useCart();
@@ -31,27 +33,34 @@ const Cart = () => {
   if (!cart || !cart.items || cart.items.length === 0) {
     return (
       <Layout>
-        <div className="container-fluid py-5">
+        <AnimatedSection className="container-fluid py-5" animationClass="animate-fade-up">
           <div className="container py-5">
             <div className="text-center">
               <h2>Your cart is empty</h2>
               <button 
                 onClick={() => navigate('/shop')}
-                className="btn border-secondary rounded-pill px-4 py-3 text-primary mt-4"
+                className="btn btn-primary rounded-pill px-4 py-3 mt-4 btn-glow"
               >
                 Continue Shopping
               </button>
             </div>
           </div>
-        </div>
+        </AnimatedSection>
       </Layout>
     );
   }
 
   return (
     <Layout>
+      <AnimatedSection className="container-fluid page-header py-5" animationClass="animate-fade-up">
+        <h1 className="text-center text-white display-6">Your Cart</h1>
+        <ol className="breadcrumb justify-content-center mb-0">
+          <li className="breadcrumb-item"><a href="/">Home</a></li>
+          <li className="breadcrumb-item active text-white">Cart</li>
+        </ol>
+      </AnimatedSection>
       {/* Cart Page Start */}
-      <div className="container-fluid py-5">
+      <AnimatedSection className="container-fluid py-5" animationClass="animate-fade-up">
         <div className="container py-5">
           <div className="table-responsive">
             <table className="table">
@@ -82,7 +91,7 @@ const Cart = () => {
                       <p className="mb-0 mt-4">{item.product.name}</p>
                     </td>
                     <td>
-                      <p className="mb-0 mt-4">${item.product.price.toFixed(2)}</p>
+                      <p className="mb-0 mt-4">{formatCurrency(item.product.price)}</p>
                     </td>
                     <td>
                       <div className="input-group quantity mt-4" style={{ width: '100px' }}>
@@ -112,7 +121,7 @@ const Cart = () => {
                     </td>
                     <td>
                       <p className="mb-0 mt-4">
-                        ${(item.product.price * item.quantity).toFixed(2)}
+                        {formatCurrency(item.product.price * item.quantity)}
                       </p>
                     </td>
                     <td>
@@ -134,8 +143,8 @@ const Cart = () => {
               className="border-0 border-bottom rounded me-5 py-3 mb-4" 
               placeholder="Coupon Code"
             />
-            <button 
-              className="btn border-secondary rounded-pill px-4 py-3 text-primary" 
+                <button 
+              className="btn btn-primary rounded-pill px-4 py-3 btn-glow" 
               type="button"
             >
               Apply Coupon
@@ -149,32 +158,32 @@ const Cart = () => {
                   <h1 className="display-6 mb-4">Cart <span className="fw-normal">Total</span></h1>
                   <div className="d-flex justify-content-between mb-4">
                     <h5 className="mb-0 me-4">Subtotal:</h5>
-                    <p className="mb-0">${getCartTotal().toFixed(2)}</p>
+                    <p className="mb-0">{formatCurrency(getCartTotal())}</p>
                   </div>
                   <div className="d-flex justify-content-between">
                     <h5 className="mb-0 me-4">Shipping</h5>
                     <div>
-                      <p className="mb-0">Flat rate: $3.00</p>
+                      <p className="mb-0">Flat rate: {formatCurrency(3)}</p>
                     </div>
                   </div>
                   <p className="mb-0 text-end">Shipping to Nigeria.</p>
                 </div>
                 <div className="py-4 mb-4 border-top border-bottom d-flex justify-content-between">
                   <h5 className="mb-0 ps-4 me-4">Total</h5>
-                  <p className="mb-0 pe-4">${(getCartTotal() + 3).toFixed(2)}</p>
+                  <p className="mb-0 pe-4">{formatCurrency(getCartTotal() + 3)}</p>
                 </div>
                 <button 
-                  className="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4" 
+                  className="btn btn-primary rounded-pill px-4 py-3 text-uppercase mb-4 ms-4 btn-glow" 
                   type="button"
                   onClick={handleCheckout}
                 >
-                  Proceed Checkout
+                  Proceed to Checkout
                 </button>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </AnimatedSection>
       {/* Cart Page End */}
     </Layout>
   );

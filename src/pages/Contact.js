@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Layout from '../components/Layout';
+import AnimatedSection from '../components/AnimatedSection';
 import { contactService } from '../services';
 import { useToast } from '../context/ToastContext';
 
@@ -30,8 +31,15 @@ const Contact = () => {
 
   return (
     <Layout>
+      <AnimatedSection className="container-fluid page-header py-5" animationClass="animate-fade-up">
+        <h1 className="text-center text-white display-6">Contact Us</h1>
+        <ol className="breadcrumb justify-content-center mb-0">
+          <li className="breadcrumb-item"><a href="/">Home</a></li>
+          <li className="breadcrumb-item active text-white">Contact</li>
+        </ol>
+      </AnimatedSection>
       {/* Contact Start */}
-      <div className="container-fluid contact py-5">
+      <AnimatedSection className="container-fluid contact py-5" animationClass="animate-fade-up">
         <div className="container py-5">
           <div className="p-5 bg-light rounded">
             <div className="row g-4">
@@ -52,6 +60,7 @@ const Contact = () => {
                     src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d387191.33750346623!2d-73.97968099999999!3d40.6974881!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c24fa5d33f083b%3A0xc80b8f06e177fe62!2sNew%20York%2C%20NY%2C%20USA!5e0!3m2!1sen!2sbd!4v1694259649153!5m2!1sen!2sbd" 
                     loading="lazy" 
                     referrerPolicy="no-referrer-when-downgrade"
+                    title="Raddazle location map"
                   ></iframe>
                 </div>
               </div>
@@ -96,7 +105,7 @@ const Contact = () => {
                     required
                   ></textarea>
                   <button
-                    className="w-100 btn form-control border-secondary py-3 bg-white text-primary"
+                    className="w-100 btn btn-primary form-control py-3 btn-glow"
                     type="submit"
                     disabled={loading}
                   >
@@ -105,32 +114,32 @@ const Contact = () => {
                 </form>
               </div>
               <div className="col-lg-5">
-                <div className="d-flex p-4 rounded mb-4 bg-white">
+                <div className="d-flex p-4 rounded mb-4 bg-white hover-lift">
                   <i className="fas fa-map-marker-alt fa-2x text-primary me-4"></i>
                   <div>
                     <h4>Address</h4>
-                    <p className="mb-2">123 Street New York, USA</p>
+                    <p className="mb-2">Lagos, Nigeria</p>
                   </div>
                 </div>
-                <div className="d-flex p-4 rounded mb-4 bg-white">
+                <div className="d-flex p-4 rounded mb-4 bg-white hover-lift">
                   <i className="fas fa-envelope fa-2x text-primary me-4"></i>
                   <div>
                     <h4>Mail Us</h4>
-                    <p className="mb-2">info@example.com</p>
+                    <p className="mb-2">support@raddazle.com</p>
                   </div>
                 </div>
-                <div className="d-flex p-4 rounded bg-white">
+                <div className="d-flex p-4 rounded bg-white hover-lift">
                   <i className="fa fa-phone-alt fa-2x text-primary me-4"></i>
                   <div>
                     <h4>Telephone</h4>
-                    <p className="mb-2">(+012) 3456 7890</p>
+                    <p className="mb-2">+234 800 000 0000</p>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </AnimatedSection>
       {/* Contact End */}
     </Layout>
   );

@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
+import AnimatedSection from '../components/AnimatedSection';
 import ProductCard from '../components/ProductCard';
 import { productService } from '../services';
 import { useCart } from '../context/CartContext';
+import { useToast } from '../context/ToastContext';
 
 const Home = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const { addToCart } = useCart();
+  const toast = useToast();
 
   useEffect(() => {
     fetchProducts();
@@ -27,17 +30,17 @@ const Home = () => {
   const handleAddToCart = async (product) => {
     try {
       await addToCart(product._id, 1);
-      alert('Product added to cart!');
+      toast.success('Product added to cart!');
     } catch (error) {
       console.error('Failed to add to cart:', error);
-      alert('Failed to add product to cart');
+      toast.error('Failed to add product to cart');
     }
   };
 
   return (
     <Layout>
       {/* Hero Start */}
-      <div className="container-fluid py-5 mb-5 hero-header">
+      <AnimatedSection className="container-fluid py-5 mb-5 hero-header" animationClass="animate-fade-up">
         <div className="container py-5">
           <div className="row g-5 align-items-center">
             <div className="col-md-12 col-lg-7">
@@ -49,50 +52,28 @@ const Home = () => {
                 <input 
                   className="form-control border-2 border-secondary w-75 py-3 px-4 rounded-pill" 
                   type="text" 
-                  placeholder="Search"
+                  placeholder="Search products"
                 />
                 <button 
                   type="submit" 
-                  className="btn btn-primary border-2 border-secondary py-3 px-4 position-absolute rounded-pill text-white h-100" 
+                  className="btn btn-primary border-2 border-secondary py-3 px-4 position-absolute rounded-pill text-white h-100 btn-glow" 
                   style={{ top: 0, right: '25%' }}
                 >
-                  Submit Now
-                </button>
-              </div>
-            </div>
-            <div className="col-md-12 col-lg-5">
-              <div id="carouselId" className="carousel slide position-relative" data-bs-ride="carousel">
-                <div className="carousel-inner" role="listbox">
-                  <div className="carousel-item active rounded">
-                    <img src="/img/hero-img-1.png" className="img-fluid w-100 h-100 bg-secondary rounded" alt="First slide" />
-                    <a href="#" className="btn px-4 py-2 text-white rounded">Rice Washer</a>
-                  </div>
-                  <div className="carousel-item rounded">
-                    <img src="/img/hero-img-2.jpg" className="img-fluid w-100 h-100 rounded" alt="Second slide" />
-                    <a href="#" className="btn px-4 py-2 text-white rounded">Colognes</a>
-                  </div>
-                </div>
-                <button className="carousel-control-prev" type="button" data-bs-target="#carouselId" data-bs-slide="prev">
-                  <span className="carousel-control-prev-icon" aria-hidden="true"></span>
-                  <span className="visually-hidden">Previous</span>
-                </button>
-                <button className="carousel-control-next" type="button" data-bs-target="#carouselId" data-bs-slide="next">
-                  <span className="carousel-control-next-icon" aria-hidden="true"></span>
-                  <span className="visually-hidden">Next</span>
+                  Search
                 </button>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </AnimatedSection>
       {/* Hero End */}
 
       {/* Featurs Section Start */}
-      <div className="container-fluid featurs py-5">
+      <AnimatedSection className="container-fluid featurs py-5" animationClass="animate-fade-up">
         <div className="container py-5">
           <div className="row g-4">
             <div className="col-md-6 col-lg-3">
-              <div className="featurs-item text-center rounded bg-light p-4">
+              <div className="featurs-item text-center rounded bg-light p-4 hover-lift">
                 <div className="featurs-icon btn-square rounded-circle bg-secondary mb-5 mx-auto">
                   <i className="fas fa-car-side fa-3x text-white"></i>
                 </div>
@@ -103,7 +84,7 @@ const Home = () => {
               </div>
             </div>
             <div className="col-md-6 col-lg-3">
-              <div className="featurs-item text-center rounded bg-light p-4">
+              <div className="featurs-item text-center rounded bg-light p-4 hover-lift">
                 <div className="featurs-icon btn-square rounded-circle bg-secondary mb-5 mx-auto">
                   <i className="fas fa-user-shield fa-3x text-white"></i>
                 </div>
@@ -114,7 +95,7 @@ const Home = () => {
               </div>
             </div>
             <div className="col-md-6 col-lg-3">
-              <div className="featurs-item text-center rounded bg-light p-4">
+              <div className="featurs-item text-center rounded bg-light p-4 hover-lift">
                 <div className="featurs-icon btn-square rounded-circle bg-secondary mb-5 mx-auto">
                   <i className="fas fa-exchange-alt fa-3x text-white"></i>
                 </div>
@@ -125,7 +106,7 @@ const Home = () => {
               </div>
             </div>
             <div className="col-md-6 col-lg-3">
-              <div className="featurs-item text-center rounded bg-light p-4">
+              <div className="featurs-item text-center rounded bg-light p-4 hover-lift">
                 <div className="featurs-icon btn-square rounded-circle bg-secondary mb-5 mx-auto">
                   <i className="fa fa-phone-alt fa-3x text-white"></i>
                 </div>
@@ -137,11 +118,11 @@ const Home = () => {
             </div>
           </div>
         </div>
-      </div>
+      </AnimatedSection>
       {/* Featurs Section End */}
 
       {/* Fruits Shop Start */}
-      <div className="container-fluid fruite py-5">
+      <AnimatedSection className="container-fluid fruite py-5" animationClass="animate-fade-up">
         <div className="container py-5">
           <div className="tab-class text-center">
             <div className="row g-4">
@@ -181,7 +162,7 @@ const Home = () => {
             </div>
           </div>
         </div>
-      </div>
+      </AnimatedSection>
       {/* Fruits Shop End */}
     </Layout>
   );

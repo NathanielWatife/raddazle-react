@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Layout from '../components/Layout';
+import AnimatedSection from '../components/AnimatedSection';
 import ProductCard from '../components/ProductCard';
+import { formatCurrency } from '../utils/currency';
 import { productService, categoryService } from '../services';
 import { useCart } from '../context/CartContext';
+import { useToast } from '../context/ToastContext';
 
 const Shop = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -12,31 +15,19 @@ const Shop = () => {
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({
     search: searchParams.get('search') || '',
-    category: '',
-    minPrice: '',
-    maxPrice: '',
-    sort: 'name'
+    category: searchParams.get('category') || '',
+    minPrice: searchParams.get('minPrice') || '',
+    maxPrice: searchParams.get('maxPrice') || '',
+    sort: searchParams.get('sort') || 'name'
   });
   const { addToCart } = useCart();
+  const toast = useToast();
 
   useEffect(() => {
     fetchCategories();
   }, []);
 
-  useEffect(() => {
-    fetchProducts();
-  }, [filters]);
-
-  const fetchCategories = async () => {
-    try {
-      const response = await categoryService.getAll({ includeCounts: true });
-      setCategories(response.categories || []);
-    } catch (error) {
-      console.error('Failed to fetch categories:', error);
-    }
-  };
-
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
     try {
       setLoading(true);
       const params = {};
@@ -53,7 +44,33 @@ const Shop = () => {
     } finally {
       setLoading(false);
     }
+  }, [filters]);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
+
+  // Keep URL in sync when filters change (search, category, sort, min/max price)
+  useEffect(() => {
+    const next = new URLSearchParams();
+    if (filters.search) next.set('search', filters.search);
+    if (filters.category) next.set('category', filters.category);
+    if (filters.sort && filters.sort !== 'name') next.set('sort', filters.sort);
+    if (filters.minPrice) next.set('minPrice', String(filters.minPrice));
+    if (filters.maxPrice) next.set('maxPrice', String(filters.maxPrice));
+    setSearchParams(next);
+  }, [filters.search, filters.category, filters.sort, filters.minPrice, filters.maxPrice, setSearchParams]);
+
+  const fetchCategories = async () => {
+    try {
+      const response = await categoryService.getAll({ includeCounts: true });
+      setCategories(response.categories || []);
+    } catch (error) {
+      console.error('Failed to fetch categories:', error);
+    }
   };
+
+  // (moved fetchProducts above, wrapped in useCallback)
 
   const handleFilterChange = (key, value) => {
     setFilters(prev => ({ ...prev, [key]: value }));
@@ -62,27 +79,27 @@ const Shop = () => {
   const handleAddToCart = async (product) => {
     try {
       await addToCart(product._id, 1);
-      alert('Product added to cart!');
+      toast.success('Product added to cart!');
     } catch (error) {
       console.error('Failed to add to cart:', error);
-      alert('Failed to add product to cart');
+      toast.error('Failed to add product to cart');
     }
   };
 
   return (
     <Layout>
       {/* Page Header Start */}
-      <div className="container-fluid page-header py-5">
+      <AnimatedSection className="container-fluid page-header py-5" animationClass="animate-fade-up">
         <h1 className="text-center text-white display-6">Fragrance Shop</h1>
         <ol className="breadcrumb justify-content-center mb-0">
           <li className="breadcrumb-item"><a href="/">Home</a></li>
           <li className="breadcrumb-item active text-white">Shop</li>
         </ol>
-      </div>
+      </AnimatedSection>
       {/* Page Header End */}
 
       {/* Fruits Shop Start */}
-      <div className="container-fluid fruite py-5">
+      <AnimatedSection className="container-fluid fruite py-5" animationClass="animate-fade-up">
         <div className="container py-5">
           <h1 className="mb-4">Luxury Fragrance Collection</h1>
           <div className="row g-4">
@@ -129,23 +146,25 @@ const Shop = () => {
                         <ul className="list-unstyled fruite-categorie">
                           <li>
                             <div className="d-flex justify-content-between fruite-name">
-                              <a 
-                                href="#" 
-                                onClick={(e) => { e.preventDefault(); handleFilterChange('category', ''); }}
+                              <button
+                                type="button"
+                                className="btn btn-link p-0 text-start"
+                                onClick={() => handleFilterChange('category', '')}
                               >
                                 <i className="fas fa-spray-can me-2"></i>All
-                              </a>
+                              </button>
                             </div>
                           </li>
                           {categories.map(cat => (
                             <li key={cat._id}>
                               <div className="d-flex justify-content-between fruite-name">
-                                <a 
-                                  href="#" 
-                                  onClick={(e) => { e.preventDefault(); handleFilterChange('category', cat._id); }}
+                                <button
+                                  type="button"
+                                  className="btn btn-link p-0 text-start"
+                                  onClick={() => handleFilterChange('category', cat._id)}
                                 >
                                   <i className="fas fa-spray-can me-2"></i>{cat.name}
-                                </a>
+                                </button>
                                 <span>({cat.productCount || 0})</span>
                               </div>
                             </li>
@@ -165,14 +184,14 @@ const Shop = () => {
                           onChange={(e) => handleFilterChange('maxPrice', e.target.value)}
                         />
                         <div className="d-flex justify-content-between">
-                          <span>$0</span>
-                          <span>${filters.maxPrice || 500}</span>
+                          <span>{formatCurrency(0)}</span>
+                          <span>{formatCurrency(filters.maxPrice || 500)}</span>
                         </div>
-                      </div>
                     </div>
                   </div>
                 </div>
-                <div className="col-12 col-lg-9">
+              </div>
+              <div className="col-12 col-lg-9">
                   <div className="row g-4 justify-content-center">
                     {loading ? (
                       <div className="col-12 text-center">
@@ -199,7 +218,7 @@ const Shop = () => {
             </div>
           </div>
         </div>
-      </div>
+      </AnimatedSection>
       {/* Fruits Shop End */}
     </Layout>
   );

@@ -4,6 +4,7 @@ import { productService } from '../../services';
 import ProtectedRoute from '../../components/ProtectedRoute';
 import AdminRoute from '../../components/AdminRoute';
 import AdminLayout from '../../components/admin/AdminLayout';
+import { useToast } from '../../context/ToastContext';
 
 const InventoryInner = () => {
   const { id } = useParams();
@@ -14,6 +15,7 @@ const InventoryInner = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [form, setForm] = useState({ delta: 0, reason: 'manual-adjustment', note: '' });
+  const toast = useToast();
 
   const fetchAll = async (p = 1) => {
     setLoading(true);
@@ -28,7 +30,9 @@ const InventoryInner = () => {
       setPage(hRes.page);
       setPages(hRes.pages);
     } catch (e) {
-      setError(e.response?.data?.message || e.message);
+      const msg = e.response?.data?.message || e.message;
+      setError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -44,7 +48,7 @@ const InventoryInner = () => {
   };
 
   if (loading) return <AdminLayout title="Inventory"><div className="text-center py-5"><div className="spinner-border"/></div></AdminLayout>;
-  if (error) return <AdminLayout title="Inventory"><div className="alert alert-danger">{error}</div></AdminLayout>;
+  if (error) return <AdminLayout title="Inventory"><p className="text-danger small">{error}</p></AdminLayout>;
   if (!product) return <AdminLayout title="Inventory"><div>Product not found</div></AdminLayout>;
 
   return (

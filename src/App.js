@@ -25,6 +25,11 @@ import Profile from './pages/Profile';
 import Orders from './pages/Orders';
 import OrderDetail from './pages/OrderDetail';
 import VerifyEmail from './pages/VerifyEmail';
+import About from './pages/About';
+import Privacy from './pages/Privacy';
+import Terms from './pages/Terms';
+import Return from './pages/Return';
+import Faq from './pages/Faq';
 
 // Admin Pages
 import AdminLogin from './pages/admin/AdminLogin';
@@ -78,6 +83,11 @@ function App() {
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/testimonial" element={<Testimonial />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/privacy" element={<Privacy />} />
+              <Route path="/terms" element={<Terms />} />
+              <Route path="/return" element={<Return />} />
+              <Route path="/faq" element={<Faq />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />

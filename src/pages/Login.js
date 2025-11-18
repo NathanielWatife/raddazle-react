@@ -1,21 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
+import AnimatedSection from '../components/AnimatedSection';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
+import { useToast } from '../context/ToastContext';
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [info, setInfo] = useState('');
   const [isUnverified, setIsUnverified] = useState(false);
   const [verificationCode, setVerificationCode] = useState('');
   const [resendLoading, setResendLoading] = useState(false);
   const [verifyLoading, setVerifyLoading] = useState(false);
-  const { login, refreshUser, user, isAdmin, isAuthenticated } = useAuth();
+  const { login, refreshUser, isAdmin, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const toast = useToast();
 
   const from = location.state?.from?.pathname || '/';
 
@@ -25,7 +26,6 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
     setLoading(true);
 
     try {
@@ -39,8 +39,7 @@ const Login = () => {
     } catch (err) {
       const status = err.response?.status;
       const message = err.response?.data?.message || 'Unable to login. Please check your credentials.';
-      setError(message);
-      setInfo('');
+      toast.error(message);
       if (status === 403 && /verify/i.test(message)) {
         setIsUnverified(true);
       } else {
@@ -53,18 +52,16 @@ const Login = () => {
 
   const handleResend = async () => {
     if (!formData.email) {
-      setError('Enter your email to resend the code.');
+      toast.error('Enter your email to resend the code.');
       return;
     }
     setResendLoading(true);
-    setError('');
-    setInfo('');
     try {
       await api.post('/auth/reset-verification', { email: formData.email });
-      setInfo('A new verification code has been sent to your email.');
+      toast.success('A new verification code has been sent to your email.');
     } catch (err) {
       const message = err.response?.data?.message || 'Unable to resend code. Please try again later.';
-      setError(message);
+      toast.error(message);
     } finally {
       setResendLoading(false);
     }
@@ -72,19 +69,18 @@ const Login = () => {
 
   const verifyNow = async () => {
     if (!formData.email || verificationCode.trim().length !== 6) {
-      setError('Enter your email and the 6-digit code.');
+      toast.error('Enter your email and the 6-digit code.');
       return;
     }
     setVerifyLoading(true);
-    setError('');
-    setInfo('');
     try {
       await api.post('/auth/verify-email', { email: formData.email, token: verificationCode.trim() });
       await refreshUser();
+      toast.success('Email verified!');
       navigate('/profile', { replace: true });
     } catch (err) {
       const message = err.response?.data?.message || 'Verification failed. Please try again.';
-      setError(message);
+      toast.error(message);
     } finally {
       setVerifyLoading(false);
     }
@@ -117,7 +113,14 @@ const Login = () => {
 
   return (
     <Layout>
-      <div className="container py-5" style={{ marginTop: '120px' }}>
+      <AnimatedSection className="container-fluid page-header py-5" animationClass="animate-fade-up">
+        <h1 className="text-center text-white display-6">Sign In</h1>
+        <ol className="breadcrumb justify-content-center mb-0">
+          <li className="breadcrumb-item"><a href="/">Home</a></li>
+          <li className="breadcrumb-item active text-white">Login</li>
+        </ol>
+      </AnimatedSection>
+      <AnimatedSection className="container py-5" animationClass="animate-fade-up">
         <div className="row justify-content-center">
           <div className="col-lg-6">
             <div className="card shadow-sm border-0">
@@ -125,17 +128,6 @@ const Login = () => {
                 <h2 className="text-center text-primary mb-1">Welcome back</h2>
                 <p className="text-center text-muted mb-4">Sign in to access your account</p>
 
-                {error && (
-                  <div className="alert alert-danger" role="alert">
-                    {error}
-                  </div>
-                )}
-
-                {info && (
-                  <div className="alert alert-info" role="alert">
-                    {info}
-                  </div>
-                )}
 
                 <form onSubmit={handleSubmit}>
                   <div className="mb-3">
@@ -169,7 +161,7 @@ const Login = () => {
                     <Link to="/forgot-password" className="text-decoration-none">Forgot password?</Link>
                   </div>
 
-                  <button type="submit" className="btn btn-primary w-100" disabled={loading}>
+                  <button type="submit" className="btn btn-primary w-100 btn-glow" disabled={loading}>
                     {loading ? 'Signing in...' : 'Sign In'}
                   </button>
                 </form>
@@ -195,7 +187,7 @@ const Login = () => {
                           required
                         />
                       </div>
-                      <button type="submit" className="btn btn-success w-100" disabled={verifyLoading}>
+                      <button type="submit" className="btn btn-primary w-100 btn-glow" disabled={verifyLoading}>
                         {verifyLoading ? 'Verifying...' : 'Verify & Continue'}
                       </button>
                     </form>
@@ -218,7 +210,7 @@ const Login = () => {
             </div>
           </div>
         </div>
-      </div>
+      </AnimatedSection>
     </Layout>
   );
 };

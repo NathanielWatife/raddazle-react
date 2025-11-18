@@ -13,6 +13,130 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Theme: White / Black / Gold */
+:root {
+  --gold-50: #fff8e1;
+  --gold-100: #ffecb3;
+  --gold-200: #ffe082;
+  --gold-300: #ffd54f;
+  --gold-400: #ffca28;
+  --gold-500: #d4af37; /* primary gold */
+  --gold-600: #bd9b2f;
+  --gold-700: #9e7f22;
+  --gold-800: #7a601a;
+  --gold-900: #5a4512;
+
+  --black-900: #0b0c0f;
+  --black-800: #111317;
+  --black-700: #161922;
+  --black-600: #1f2430;
+  --white: #ffffff;
+
+  /* Bootstrap variable overrides (runtime CSS variables) */
+  --bs-primary: var(--gold-500);
+  --bs-secondary: var(--black-800);
+  --bs-dark: #000000;
+  --bs-light: #ffffff;
+}
+
+/* Apply theme only on customer pages via body class to avoid admin bleed */
+body.theme-gold {
+  background: var(--black-900);
+  color: var(--white);
+}
+
+/* Light variant: white background, black text, gold accents */
+body.theme-gold-light {
+  background: var(--white);
+  color: #0f172a;
+}
+
+body.theme-gold-light a { color: var(--gold-600); }
+body.theme-gold-light a:hover { color: var(--gold-500); }
+
+/* Navbar / Topbar for light theme */
+body.theme-gold-light .topbar { background: var(--white) !important; }
+body.theme-gold-light .fixed-top { background: var(--white); border: 0; }
+body.theme-gold-light .navbar,
+body.theme-gold-light .navbar .nav-link,
+body.theme-gold-light .navbar .navbar-brand { color: #111 !important; }
+body.theme-gold-light .dropdown-menu { background: #ffffff; color: #0f172a; }
+body.theme-gold-light .dropdown-item { color: #0f172a; }
+body.theme-gold-light .dropdown-item:hover { background: #f3f4f6; color: #111; }
+
+/* Buttons remain gold */
+body.theme-gold-light .btn-primary { background: var(--gold-500); border-color: var(--gold-600); color: #111; }
+body.theme-gold-light .btn-primary:hover { background: var(--gold-400); border-color: var(--gold-500); color: #000; }
+body.theme-gold-light .btn-outline-secondary,
+body.theme-gold-light .btn.border-secondary { color: #111; border-color: rgba(17,17,17,0.2) !important; }
+body.theme-gold-light .btn-outline-secondary:hover,
+body.theme-gold-light .btn.border-secondary:hover { background: #111; color: #fff !important; }
+
+/* Inputs */
+body.theme-gold-light .form-control,
+body.theme-gold-light .input-group-text { background: #fff; color: #0f172a; border-color: #e5e7eb; }
+body.theme-gold-light .form-control:focus { box-shadow: 0 0 0 0.2rem rgba(212, 175, 55, 0.18); border-color: var(--gold-500); }
+
+/* Spinner gold accent on light theme */
+body.theme-gold-light .spinner-border { color: var(--gold-500); }
+
+/* Text defaults and link colors under theme */
+body.theme-gold a { color: var(--gold-500); }
+body.theme-gold a:hover { color: var(--gold-400); }
+
+/* Navbar, Topbar, Footer adjustments under theme */
+body.theme-gold .topbar { background: var(--black-800) !important; }
+body.theme-gold .fixed-top { background: transparent; border: 0; }
+body.theme-gold .navbar.bg-white { background: var(--black-900) !important; }
+body.theme-gold .navbar,
+body.theme-gold .navbar .nav-link,
+body.theme-gold .navbar .navbar-brand,
+body.theme-gold .navbar .dropdown-menu { color: var(--white) !important; }
+body.theme-gold .dropdown-menu { background: var(--black-800); border-color: rgba(255,255,255,0.08); }
+body.theme-gold .dropdown-item { color: var(--white); }
+body.theme-gold .dropdown-item:hover { background: var(--black-700); color: var(--gold-500); }
+body.theme-gold .footer,
+body.theme-gold .copyright { background: var(--black-900) !important; }
+
+/* Cards and light surfaces used around the site */
+body.theme-gold .bg-light { background: var(--black-800) !important; }
+body.theme-gold .text-dark { color: var(--white) !important; }
+body.theme-gold .text-muted { color: rgba(255,255,255,0.7) !important; }
+body.theme-gold .border,
+body.theme-gold .border-secondary { border-color: rgba(212, 175, 55, 0.35) !important; }
+
+/* Buttons: primary gold, secondary outlined black */
+body.theme-gold .btn-primary { background: var(--gold-500); border-color: var(--gold-600); color: #111; }
+body.theme-gold .btn-primary:hover { background: var(--gold-400); border-color: var(--gold-500); color: #000; }
+body.theme-gold .btn-outline-secondary,
+body.theme-gold .btn.border-secondary { color: var(--gold-500); border-color: rgba(212,175,55,0.5) !important; }
+body.theme-gold .btn-outline-secondary:hover,
+body.theme-gold .btn.border-secondary:hover { background: var(--gold-500); color: #111 !important; }
+
+/* Inputs */
+body.theme-gold .form-control,
+body.theme-gold .input-group-text { background: var(--black-800); color: var(--white); border-color: rgba(212, 175, 55, 0.35); }
+body.theme-gold .form-control:focus { box-shadow: 0 0 0 0.2rem rgba(212, 175, 55, 0.25); border-color: var(--gold-500); }
+
+/* Badges and pills used for categories */
+body.theme-gold .bg-secondary { background: var(--black-700) !important; }
+body.theme-gold .text-secondary { color: var(--gold-500) !important; }
+
+/* Hero and section headers */
+body.theme-gold .hero-header { background-image: linear-gradient(rgba(17, 19, 23, 0.6), rgba(17, 19, 23, 0.6)), url(../assets/img/hero-img.jpg); }
+
+/* Product cards */
+body.theme-gold .fruite .fruite-item,
+body.theme-gold .vesitable .vesitable-item { background: var(--black-800); border-color: rgba(212,175,55,0.25); }
+body.theme-gold .fruite .fruite-item .fruite-img { background: var(--black-700); }
+
+/* Search panel */
+body.theme-gold .search-panel { background: var(--black-800); color: var(--white); }
+body.theme-gold .search-header { background: var(--black-700); border-bottom-color: rgba(255,255,255,0.08); }
+body.theme-gold .search-input .input-group-text,
+body.theme-gold .search-input .form-control { background: var(--black-800); color: var(--white); border-color: rgba(212,175,55,0.35); }
+body.theme-gold .search-input .form-control:focus { border-color: var(--gold-500); }
+
 /* Make media and embeds responsive by default */
 img, video, canvas, svg {
   max-width: 100%;
@@ -38,6 +162,9 @@ code {
   width: 3rem;
   height: 3rem;
 }
+
+/* Spinner gold accent on theme */
+body.theme-gold .spinner-border { color: var(--gold-500); }
 
 /* Admin sidebar styles */
 .sidebar {
@@ -101,6 +228,7 @@ a:hover {
   margin-bottom: 12px;
   overflow: hidden;
 }
+body.theme-gold .chat-panel { background: var(--black-800); }
 
 .chat-header {
   padding: 0.85rem 1rem;
@@ -110,6 +238,7 @@ a:hover {
   justify-content: space-between;
   background: #f5f7fb;
 }
+body.theme-gold .chat-header { background: var(--black-700); border-bottom-color: rgba(255,255,255,0.07); }
 
 .chat-body {
   flex: 1;
@@ -120,12 +249,14 @@ a:hover {
   flex-direction: column;
   gap: 0.75rem;
 }
+body.theme-gold .chat-body { background: var(--black-800); }
 
 .chat-footer {
   padding: 0.85rem 1rem;
   border-top: 1px solid rgba(0, 0, 0, 0.08);
   background: #fff;
 }
+body.theme-gold .chat-footer { background: var(--black-800); border-top-color: rgba(255,255,255,0.07); }
 
 .chat-bubble {
   max-width: 85%;
@@ -140,12 +271,14 @@ a:hover {
   background: #0d6efd;
   color: #fff;
 }
+body.theme-gold .chat-bubble-user { background: var(--gold-600); color: #111; }
 
 .chat-bubble-assistant {
   margin-right: auto;
   background: #eff2f9;
   color: #0f172a;
 }
+body.theme-gold .chat-bubble-assistant { background: var(--black-700); color: #e5e7eb; }
 
 @media (max-width: 576px) {
   .chat-widget {
@@ -225,3 +358,43 @@ a:hover {
 @media (max-width: 576px) {
   .search-panel { margin: 12vh auto 0; width: 94vw; }
 }
+
+/* ================= Animations & Micro-interactions ================ */
+/* Smooth transitions for interactive elements */
+button, .btn, a, .nav-link, .form-control, .card, .fruite-item, .vesitable-item {
+  transition: all .25s ease;
+}
+
+/* Hover effects */
+.hover-lift { transform: translateY(0); box-shadow: none; }
+.hover-lift:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(0,0,0,0.35); }
+
+.hover-shine { position: relative; overflow: hidden; }
+.hover-shine::after { content: ""; position: absolute; top: 0; left: -150%; width: 120%; height: 100%; transform: skewX(-20deg); background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent); transition: left .6s ease; }
+.hover-shine:hover::after { left: 150%; }
+
+/* Button glow on hover for primary */
+.btn-glow:hover { box-shadow: 0 8px 24px rgba(212,175,55,0.35); }
+
+/* Reveal on scroll utilities */
+.reveal { opacity: 0; transform: translateY(10px); }
+.reveal.in-view { opacity: 1; transform: translateY(0); transition: opacity .45s ease, transform .45s ease; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-up { animation: fadeUp .5s ease forwards; }
+
+/* Product card specific polish */
+body.theme-gold .fruite .fruite-item { border: 1px solid rgba(212,175,55,0.25); border-radius: 12px; }
+body.theme-gold .fruite .fruite-item:hover { box-shadow: 0 16px 40px rgba(0,0,0,0.55); }
+body.theme-gold .fruite .fruite-item .fruite-img img { transition: transform .5s ease; }
+body.theme-gold .fruite .fruite-item:hover .fruite-img img { transform: scale(1.08); }
+
+/* Navbar enhancements for light/dark themes */
+.fixed-top.is-scrolled .navbar { height: 72px; box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+.nav-underline .nav-link { position: relative; }
+.nav-underline .nav-link::after { content: ""; position: absolute; left: 12px; right: 12px; bottom: 6px; height: 2px; background: var(--gold-500); transform: scaleX(0); transform-origin: left; transition: transform .25s ease; }
+.nav-underline .nav-link:hover::after, .nav-underline .nav-link.active::after { transform: scaleX(1); }
