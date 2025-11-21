@@ -33,6 +33,8 @@ import Faq from './pages/Faq';
 
 // Admin Pages
 import AdminLogin from './pages/admin/AdminLogin';
+import AdminForgotPassword from './pages/admin/AdminForgotPassword';
+import AdminResetPassword from './pages/admin/AdminResetPassword';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminUsers from './pages/admin/AdminUsers';
 import OrdersAdmin from './pages/admin/OrdersAdmin';
@@ -121,6 +123,8 @@ function App() {
             
             {/* Admin Routes */}
             <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/admin/forgot-password" element={<AdminForgotPassword />} />
+            <Route path="/admin/reset-password" element={<AdminResetPassword />} />
             <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
             <Route path="/admin/dashboard" element={(<ProtectedRoute><AdminRoute><AdminDashboard /></AdminRoute></ProtectedRoute>)} />
             <Route path="/admin/users" element={(<ProtectedRoute><AdminRoute><AdminUsers /></AdminRoute></ProtectedRoute>)} />

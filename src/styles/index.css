@@ -359,6 +359,116 @@ body.theme-gold .chat-bubble-assistant { background: var(--black-700); color: #e
   .search-panel { margin: 12vh auto 0; width: 94vw; }
 }
 
+/* Mobile Navbar Enhancements */
+@media (max-width: 991.98px) {
+  /* Make navbar collapsible menu full-screen on mobile */
+  .navbar-collapse {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 85vw;
+    max-width: 320px;
+    height: 100vh;
+    background: #ffffff;
+    box-shadow: 2px 0 20px rgba(0,0,0,0.2);
+    transition: left 0.3s ease;
+    z-index: 1050;
+    overflow-y: auto;
+    padding: 20px 0;
+  }
+  
+  .navbar-collapse.show {
+    left: 0;
+  }
+  
+  /* Mobile menu backdrop */
+  .navbar-collapse.show::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: -1;
+  }
+  
+  /* Stack navbar items vertically */
+  .navbar-nav {
+    flex-direction: column;
+    padding: 0 20px;
+  }
+  
+  .navbar-nav .nav-item {
+    width: 100%;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+  }
+  
+  .navbar-nav .nav-link {
+    padding: 15px 10px !important;
+    font-size: 1rem !important;
+  }
+  
+  /* Dropdown in mobile menu */
+  .navbar-nav .dropdown-menu {
+    position: static !important;
+    float: none;
+    width: 100%;
+    margin: 0;
+    background: rgba(0,0,0,0.02);
+    border: none;
+    box-shadow: none;
+  }
+  
+  .navbar-nav .dropdown-item {
+    padding: 10px 20px;
+  }
+  
+  /* Mobile navbar actions */
+  .navbar .d-flex {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin: 15px 10px !important;
+  }
+  
+  /* Better mobile navbar toggler */
+  .navbar-toggler {
+    border: 2px solid var(--bs-primary);
+    padding: 8px 12px;
+    margin-right: 10px;
+  }
+  
+  .navbar-toggler:focus {
+    box-shadow: 0 0 0 0.2rem rgba(212,175,55,0.25);
+  }
+}
+
+/* Extra small mobile improvements */
+@media (max-width: 575.98px) {
+  .navbar-collapse {
+    width: 90vw;
+    max-width: 100%;
+  }
+  
+  /* Compact user dropdown on mobile */
+  .navbar .dropdown button {
+    font-size: 0.9rem;
+    padding: 8px 12px !important;
+  }
+  
+  /* Search button - make it prominent */
+  .btn-search {
+    width: 44px;
+    height: 44px;
+  }
+  
+  /* Cart icon spacing */
+  .fa-shopping-bag {
+    font-size: 1.5rem !important;
+  }
+}
+
 /* ================= Animations & Micro-interactions ================ */
 /* Smooth transitions for interactive elements */
 button, .btn, a, .nav-link, .form-control, .card, .fruite-item, .vesitable-item {
@@ -398,3 +508,358 @@ body.theme-gold .fruite .fruite-item:hover .fruite-img img { transform: scale(1.
 .nav-underline .nav-link { position: relative; }
 .nav-underline .nav-link::after { content: ""; position: absolute; left: 12px; right: 12px; bottom: 6px; height: 2px; background: var(--gold-500); transform: scaleX(0); transform-origin: left; transition: transform .25s ease; }
 .nav-underline .nav-link:hover::after, .nav-underline .nav-link.active::after { transform: scaleX(1); }
+
+/* ================= Mobile Cart Page Styles ================ */
+@media (max-width: 767.98px) {
+  /* Hide table header on mobile */
+  .table thead {
+    display: none;
+  }
+  
+  /* Transform table rows into cards */
+  .table tbody tr {
+    display: block;
+    margin-bottom: 20px;
+    border: 1px solid rgba(0,0,0,0.1);
+    border-radius: 12px;
+    padding: 15px;
+    background: #ffffff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  
+  .table tbody td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 5px !important;
+    border: none;
+    text-align: right;
+    min-width: unset !important;
+    white-space: normal !important;
+  }
+  
+  .table tbody td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    text-align: left;
+    margin-right: auto;
+    color: #333;
+  }
+  
+  /* Product image in cart - make it full width */
+  .table tbody td:first-child {
+    flex-direction: column;
+    justify-content: center;
+  }
+  
+  .table tbody td:first-child::before {
+    display: none;
+  }
+  
+  .table tbody td img {
+    width: 100px !important;
+    height: 100px !important;
+    margin: 0 auto 10px !important;
+  }
+  
+  /* Quantity controls - make them more touch-friendly */
+  .quantity {
+    width: 140px !important;
+    margin: 0 !important;
+  }
+  
+  .quantity .btn {
+    width: 40px;
+    height: 40px;
+    padding: 0 !important;
+  }
+  
+  .quantity input {
+    font-size: 1rem !important;
+    font-weight: 600;
+  }
+  
+  /* Remove/delete button */
+  .table tbody td:last-child button {
+    width: 44px;
+    height: 44px;
+  }
+  
+  /* Cart summary on mobile */
+  .cart-summary {
+    position: sticky;
+    bottom: 0;
+    background: #ffffff;
+    padding: 15px;
+    box-shadow: 0 -4px 12px rgba(0,0,0,0.1);
+    z-index: 100;
+  }
+}
+
+/* Mobile-friendly checkout and cart actions */
+@media (max-width: 575.98px) {
+  /* Stack buttons vertically */
+  .cart-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .cart-actions .btn {
+    width: 100%;
+  }
+  
+  /* Coupon input on mobile */
+  .coupon-section {
+    flex-direction: column;
+  }
+  
+  .coupon-section input {
+    width: 100% !important;
+    margin-bottom: 10px;
+  }
+  
+  .coupon-section button {
+    width: 100%;
+  }
+}
+
+/* ================= Mobile Shop Page Optimizations ================ */
+@media (max-width: 991.98px) {
+  /* Shop filters sidebar - stack on mobile */
+  .fruite-categorie {
+    margin-bottom: 20px;
+  }
+  
+  /* Filter buttons full width */
+  .fruite-categorie button {
+    width: 100%;
+    text-align: left;
+    padding: 12px 15px;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+  }
+  
+  /* Product grid - 2 columns on mobile */
+  .fruite .row.g-4 > [class*="col-"] {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}
+
+@media (min-width: 576px) and (max-width: 991.98px) {
+  /* 2 columns on tablets */
+  .fruite .row.g-4 > [class*="col-"] {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+}
+
+/* ================= Mobile Checkout Page ================ */
+@media (max-width: 767.98px) {
+  /* Stack checkout form and summary */
+  .checkout-form,
+  .checkout-summary {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+  
+  /* Form inputs full width */
+  .checkout-form .form-control,
+  .checkout-form .form-select {
+    width: 100% !important;
+  }
+  
+  /* Payment method cards stack */
+  .payment-methods {
+    flex-direction: column;
+  }
+  
+  .payment-method-card {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+}
+
+/* ================= Mobile Product Detail Page ================ */
+@media (max-width: 767.98px) {
+  /* Product image slider full width */
+  .product-detail-image {
+    width: 100%;
+    height: auto;
+    margin-bottom: 20px;
+  }
+  
+  /* Product info section */
+  .product-detail-info h1 {
+    font-size: 1.75rem !important;
+  }
+  
+  .product-detail-price {
+    font-size: 1.5rem !important;
+  }
+  
+  /* Add to cart button full width */
+  .product-detail-actions .btn {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  
+  /* Reviews section */
+  .product-reviews {
+    padding: 15px;
+  }
+  
+  .review-item {
+    padding: 15px 10px;
+  }
+}
+
+/* ================= Mobile Footer ================ */
+@media (max-width: 767.98px) {
+  .footer {
+    text-align: center;
+  }
+  
+  .footer .footer-item {
+    margin-bottom: 30px;
+  }
+  
+  .footer .btn-link {
+    display: block;
+    text-align: center;
+  }
+  
+  .footer-social-icons {
+    justify-content: center;
+  }
+}
+
+/* ================= Mobile Forms & Authentication ================ */
+@media (max-width: 575.98px) {
+  /* Login, Register, Reset Password forms */
+  .auth-form {
+    padding: 20px 15px;
+  }
+  
+  .auth-form h2 {
+    font-size: 1.5rem !important;
+  }
+  
+  .auth-form .btn {
+    width: 100%;
+  }
+  
+  /* Profile page mobile */
+  .profile-avatar {
+    width: 100px !important;
+    height: 100px !important;
+  }
+  
+  .profile-info {
+    text-align: center;
+  }
+}
+
+/* ================= Mobile Order History ================ */
+@media (max-width: 767.98px) {
+  /* Order cards */
+  .order-card {
+    padding: 15px;
+    margin-bottom: 15px;
+  }
+  
+  .order-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .order-status {
+    margin-top: 10px;
+    width: 100%;
+  }
+  
+  .order-items {
+    flex-direction: column;
+  }
+  
+  .order-item {
+    width: 100%;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+  }
+  
+  .order-total {
+    font-size: 1.25rem !important;
+  }
+}
+
+/* ================= Touch Device Improvements ================ */
+@media (hover: none) and (pointer: coarse) {
+  /* Remove hover effects on touch devices */
+  .hover-lift:hover {
+    transform: none;
+  }
+  
+  /* Make all clickable elements more visible on tap */
+  a:active,
+  button:active,
+  .btn:active {
+    opacity: 0.7;
+  }
+  
+  /* Larger dropdown items for easier tapping */
+  .dropdown-item {
+    padding: 12px 20px;
+    font-size: 1rem;
+  }
+}
+
+/* ================= Mobile Performance Optimizations ================ */
+@media (max-width: 991.98px) {
+  /* Reduce animation complexity on mobile */
+  * {
+    animation-duration: 0.2s !important;
+    transition-duration: 0.2s !important;
+  }
+  
+  /* Disable parallax and complex effects */
+  [class*="parallax"] {
+    background-attachment: scroll !important;
+  }
+  
+  /* Optimize images for mobile */
+  img {
+    height: auto;
+    max-width: 100%;
+  }
+}
+
+/* ================= Accessibility Improvements for Mobile ================ */
+@media (max-width: 767.98px) {
+  /* Skip to content link for screen readers */
+  .skip-to-content {
+    position: absolute;
+    left: -9999px;
+    z-index: 999;
+  }
+  
+  .skip-to-content:focus {
+    left: 50%;
+    transform: translateX(-50%);
+    top: 10px;
+    background: var(--bs-primary);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 4px;
+  }
+  
+  /* Ensure focus states are visible on mobile */
+  button:focus,
+  a:focus,
+  input:focus,
+  select:focus,
+  textarea:focus {
+    outline: 2px solid var(--bs-primary);
+    outline-offset: 2px;
+  }
+}
