@@ -99,6 +99,7 @@ const AdminLogin = () => {
                 </button>
               </form>
               <div className="text-center mt-3">
+                <a href="/admin/forgot-password" className="text-decoration-none d-block mb-2">Forgot Password?</a>
                 <a href="/" className="text-decoration-none">Back to Home</a>
               </div>
             </div>

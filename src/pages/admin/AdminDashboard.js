@@ -162,49 +162,73 @@ const AdminDashboard = () => {
   return (
     <AdminLayout title="Dashboard">
       {/* Stats Cards */}
-      <div className="row mb-4">
-            <div className="col-md-3 mb-3">
-              <div className="card bg-primary text-white">
+      <div className="row g-3 mb-4">
+            <div className="col-12 col-sm-6 col-lg-3">
+              <div className="card bg-primary text-white h-100">
                 <div className="card-body">
-                  <h5 className="card-title">Total Users</h5>
-                  <h2>{stats?.users?.totalUsers || 0}</h2>
-                  <small>Active: {stats?.users?.activeUsers || 0}</small>
+                  <div className="d-flex justify-content-between align-items-start">
+                    <div>
+                      <h6 className="card-title text-uppercase small mb-2">Total Users</h6>
+                      <h2 className="mb-1">{stats?.users?.totalUsers || 0}</h2>
+                      <small className="opacity-75">Active: {stats?.users?.activeUsers || 0}</small>
+                    </div>
+                    <i className="fas fa-users fa-2x opacity-50"></i>
+                  </div>
                 </div>
               </div>
             </div>
-            <div className="col-md-3 mb-3">
-              <div className="card bg-success text-white">
+            <div className="col-12 col-sm-6 col-lg-3">
+              <div className="card bg-success text-white h-100">
                 <div className="card-body">
-                  <h5 className="card-title">Total Products</h5>
-                  <h2>{stats?.products?.totalProducts || 0}</h2>
-                  <small>In Stock</small>
+                  <div className="d-flex justify-content-between align-items-start">
+                    <div>
+                      <h6 className="card-title text-uppercase small mb-2">Total Products</h6>
+                      <h2 className="mb-1">{stats?.products?.totalProducts || 0}</h2>
+                      <small className="opacity-75">In Stock</small>
+                    </div>
+                    <i className="fas fa-box fa-2x opacity-50"></i>
+                  </div>
                 </div>
               </div>
             </div>
-            <div className="col-md-3 mb-3">
-              <div className="card bg-warning text-white">
+            <div className="col-12 col-sm-6 col-lg-3">
+              <div className="card bg-warning text-white h-100">
                 <div className="card-body">
-                  <h5 className="card-title">Total Orders</h5>
-                  <h2>{stats?.orders?.totalOrders || 0}</h2>
-                  <small>All time</small>
+                  <div className="d-flex justify-content-between align-items-start">
+                    <div>
+                      <h6 className="card-title text-uppercase small mb-2">Total Orders</h6>
+                      <h2 className="mb-1">{stats?.orders?.totalOrders || 0}</h2>
+                      <small className="opacity-75">All time</small>
+                    </div>
+                    <i className="fas fa-shopping-cart fa-2x opacity-50"></i>
+                  </div>
                 </div>
               </div>
             </div>
-            <div className="col-md-3 mb-3">
-              <div className="card bg-info text-white">
+            <div className="col-12 col-sm-6 col-lg-3">
+              <div className="card bg-info text-white h-100">
                 <div className="card-body">
-                  <h5 className="card-title">Revenue</h5>
-                  <h2>{formatCurrency(stats?.orders?.totalRevenue || 0)}</h2>
-                  <small>Total</small>
+                  <div className="d-flex justify-content-between align-items-start">
+                    <div>
+                      <h6 className="card-title text-uppercase small mb-2">Revenue</h6>
+                      <h2 className="mb-1 fs-4">{formatCurrency(stats?.orders?.totalRevenue || 0)}</h2>
+                      <small className="opacity-75">Total</small>
+                    </div>
+                    <i className="fas fa-dollar-sign fa-2x opacity-50"></i>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
       {/* Categories */}
-      <div className="d-flex justify-content-between align-items-center mt-2 mb-2">
-        <h2 className="mb-0">Categories</h2>
-        <button className="btn btn-sm btn-primary" onClick={openCreateCategory}><i className="fas fa-plus me-1"></i>Add Category</button>
+      <div className="d-flex justify-content-between align-items-center flex-wrap gap-2 mt-2 mb-3">
+        <h2 className="mb-0 h4">Categories</h2>
+        <button className="btn btn-sm btn-primary" onClick={openCreateCategory}>
+          <i className="fas fa-plus me-2"></i>
+          <span className="d-none d-sm-inline">Add Category</span>
+          <span className="d-sm-none">Add</span>
+        </button>
       </div>
       {catError && <p className="text-danger small">{catError}</p>}
       <div className="table-responsive">
@@ -302,36 +326,42 @@ const AdminDashboard = () => {
       )}
 
       {/* Recent Orders Table */}
-      <h2 className="mb-3">Recent Orders</h2>
+      <div className="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3 mt-4">
+        <h2 className="mb-0 h4">Recent Orders</h2>
+      </div>
       <div className="table-responsive">
             <table className="table table-striped table-sm">
               <thead>
                 <tr>
                   <th>Order ID</th>
-                  <th>Customer</th>
+                  <th className="d-none d-md-table-cell">Customer</th>
                   <th>Status</th>
                   <th>Total</th>
-                  <th>Date</th>
+                  <th className="d-none d-lg-table-cell">Date</th>
                 </tr>
               </thead>
               <tbody>
                 {stats?.orders?.recentOrders && stats.orders.recentOrders.length > 0 ? (
                   stats.orders.recentOrders.map((order) => (
                     <tr key={order._id}>
-                      <td>{order._id}</td>
-                      <td>{order.user?.name || order.user?.email || '-'}</td>
+                      <td className="text-truncate" style={{ maxWidth: '120px' }}>
+                        <small>{order._id.slice(-8)}</small>
+                      </td>
+                      <td className="d-none d-md-table-cell">{order.user?.name || order.user?.email || '-'}</td>
                       <td>
-                        <span className={`badge bg-${order.status === 'delivered' ? 'success' : 'warning'}`}>
+                        <span className={`badge bg-${order.status === 'delivered' ? 'success' : order.status === 'pending' ? 'warning' : 'info'}`}>
                           {order.status}
                         </span>
                       </td>
-                      <td>{formatCurrency(order.totalPrice)}</td>
-                      <td>{formatDate(order.createdAt)}</td>
+                      <td className="fw-bold">{formatCurrency(order.totalPrice)}</td>
+                      <td className="d-none d-lg-table-cell">
+                        <small>{formatDate(order.createdAt)}</small>
+                      </td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="5" className="text-center">No recent orders</td>
+                    <td colSpan="5" className="text-center py-4 text-muted">No recent orders</td>
                   </tr>
                 )}
               </tbody>

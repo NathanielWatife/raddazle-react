@@ -38,14 +38,19 @@ const AdminLayout = ({ title, children }) => {
 
   return (
     <div className={`container-fluid admin-dark ${sidebarOpen ? 'admin-has-sidebar-open' : ''}`}>
-      <div className="row">
+      <div className="row g-0">
         {/* Sidebar */}
         <nav className="col-md-3 col-lg-2 d-md-block bg-dark sidebar min-vh-100 border-end text-white">
           <div className="position-sticky pt-3">
             <div className="px-3 d-flex justify-content-between align-items-center mb-3">
               <h5 className="text-accent mb-0">Raddazle Admin</h5>
               {/* Close button visible on small screens */}
-              <button className="btn btn-sm btn-outline-secondary d-md-none" onClick={() => setSidebarOpen(false)} aria-label="Close sidebar">
+              <button 
+                className="btn btn-sm btn-outline-secondary d-md-none" 
+                onClick={() => setSidebarOpen(false)} 
+                aria-label="Close sidebar"
+                style={{ minWidth: '44px', minHeight: '44px' }}
+              >
                 <i className="fas fa-times"></i>
               </button>
             </div>
@@ -57,28 +62,48 @@ const AdminLayout = ({ title, children }) => {
               <NavItem to="/admin/orders" icon="fas fa-shopping-cart" label="Orders" />
               <NavItem to="/admin/payments" icon="fas fa-receipt" label="Payments" />
               <NavItem to="/admin/webhook-events" icon="fas fa-plug" label="Webhook Events" />
-              {/* Product admin pages can be added later */}
-              {/* <NavItem to="/admin/products" icon="fas fa-box" label="Products" /> */}
             </ul>
+            {/* Mobile only - Back to store link */}
+            <div className="px-3 mt-4 d-md-none">
+              <Link to="/" className="btn btn-outline-secondary w-100">
+                <i className="fas fa-store me-2"></i>
+                Back to Store
+              </Link>
+            </div>
           </div>
         </nav>
 
         {/* Backdrop for mobile sidebar */}
-        {sidebarOpen && <div className="sidebar-backdrop d-md-none" onClick={() => setSidebarOpen(false)}></div>}
+        {sidebarOpen && (
+          <div 
+            className="sidebar-backdrop d-md-none" 
+            onClick={() => setSidebarOpen(false)}
+            role="button"
+            aria-label="Close sidebar"
+          ></div>
+        )}
 
         {/* Main */}
-        <main className="col-md-9 ms-sm-auto col-lg-10 px-md-4 text-light">
-          <div className="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
-            <div>
-              <h1 className="h4 mb-0">{title || 'Admin'}</h1>
-              <small className="text-muted">Signed in as {user?.name} ({user?.role})</small>
+        <main className="col-md-9 ms-sm-auto col-lg-10 px-2 px-md-4 text-light">
+          <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <div className="mb-2 mb-md-0">
+              <h1 className="h4 mb-1">{title || 'Admin'}</h1>
+              <small className="text-muted d-block">Signed in as {user?.name} ({user?.role})</small>
             </div>
-            <div className="d-flex gap-2">
+            <div className="d-flex gap-2 align-items-center">
               {/* Sidebar toggle button on mobile */}
-              <button className="btn btn-sm btn-outline-secondary d-md-none" onClick={() => setSidebarOpen(true)} aria-label="Open sidebar">
+              <button 
+                className="btn btn-sm btn-outline-secondary d-md-none" 
+                onClick={() => setSidebarOpen(true)} 
+                aria-label="Open sidebar"
+                style={{ minWidth: '44px', minHeight: '44px' }}
+              >
                 <i className="fas fa-bars"></i>
               </button>
-              <button className="btn btn-sm btn-outline-danger" onClick={onLogout}>Logout</button>
+              <button className="btn btn-sm btn-outline-danger" onClick={onLogout}>
+                <i className="fas fa-sign-out-alt d-md-none"></i>
+                <span className="d-none d-md-inline">Logout</span>
+              </button>
             </div>
           </div>
 

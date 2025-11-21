@@ -590,3 +590,305 @@
     to { opacity: 1; transform: scale(1); }
 }
 
+/* ========================================
+   COMPREHENSIVE MOBILE RESPONSIVE STYLES
+   ======================================== */
+
+/* Extra Small Devices (Phones, 320px and up) */
+@media (max-width: 575.98px) {
+    /* Typography */
+    h1.display-1 { font-size: 2.5rem !important; }
+    h1.display-2 { font-size: 2.2rem !important; }
+    h1.display-3 { font-size: 2rem !important; }
+    h1.display-4 { font-size: 1.8rem !important; }
+    h1.display-5 { font-size: 1.6rem !important; }
+    h1.display-6 { font-size: 1.4rem !important; }
+    
+    h1 { font-size: 1.75rem !important; }
+    h2 { font-size: 1.5rem !important; }
+    h3 { font-size: 1.25rem !important; }
+    h4 { font-size: 1.1rem !important; }
+    h5 { font-size: 1rem !important; }
+    
+    /* Container spacing */
+    .container-fluid { padding-left: 15px !important; padding-right: 15px !important; }
+    .container { padding-left: 15px !important; padding-right: 15px !important; }
+    
+    /* Section spacing - reduce vertical padding */
+    section { padding-top: 3rem !important; padding-bottom: 3rem !important; }
+    .py-5 { padding-top: 2rem !important; padding-bottom: 2rem !important; }
+    .py-4 { padding-top: 1.5rem !important; padding-bottom: 1.5rem !important; }
+    
+    /* Hero Header */
+    .hero-header { 
+        min-height: 60vh !important;
+        padding-top: 2rem !important;
+        padding-bottom: 2rem !important;
+    }
+    .hero-header h1 { font-size: 2rem !important; line-height: 1.2 !important; }
+    .hero-header h4 { font-size: 1rem !important; }
+    .hero-header .form-control { width: 100% !important; font-size: 0.9rem !important; }
+    .hero-header button { 
+        position: relative !important; 
+        right: 0 !important; 
+        width: 100% !important; 
+        margin-top: 10px !important;
+    }
+    
+    /* Page Header */
+    .page-header { 
+        padding-top: 2rem !important; 
+        padding-bottom: 2rem !important;
+        margin-top: 80px !important;
+    }
+    
+    /* Buttons - larger touch targets */
+    .btn { 
+        padding: 0.6rem 1.2rem !important;
+        font-size: 0.95rem !important;
+        min-height: 44px;
+    }
+    .btn-lg { 
+        padding: 0.8rem 1.5rem !important;
+        font-size: 1rem !important;
+    }
+    .btn.rounded-pill { padding-left: 1.5rem !important; padding-right: 1.5rem !important; }
+    
+    /* Icon buttons - ensure touch-friendly size */
+    .btn-square, .btn-sm-square, .btn-md-square { 
+        width: 44px !important; 
+        height: 44px !important; 
+    }
+    
+    /* Features section */
+    .featurs .featurs-item { margin-bottom: 1.5rem; padding: 1.5rem !important; }
+    .featurs .featurs-icon { 
+        width: 80px !important; 
+        height: 80px !important; 
+        margin-bottom: 1rem !important;
+    }
+    .featurs .featurs-icon i { font-size: 2rem !important; }
+    
+    /* Product cards */
+    .fruite-item, .vesitable-item { margin-bottom: 1.5rem; }
+    .fruite-item img, .vesitable-item img { max-height: 200px; object-fit: cover; }
+    
+    /* Tab navigation - stack on mobile */
+    .nav-pills { 
+        display: flex !important; 
+        flex-direction: column !important; 
+        width: 100% !important;
+    }
+    .nav-pills .nav-item { width: 100% !important; margin: 0.25rem 0 !important; }
+    .nav-pills .nav-link { 
+        width: 100% !important; 
+        text-align: center !important;
+        padding: 0.75rem !important;
+    }
+    
+    /* Forms */
+    .form-control, .form-select { 
+        font-size: 16px !important; /* Prevent iOS zoom */
+        padding: 0.75rem !important;
+        min-height: 44px;
+    }
+    
+    /* Input groups */
+    .input-group { flex-wrap: nowrap !important; }
+    .input-group .form-control { flex: 1 1 auto; }
+    .input-group-text { padding: 0.75rem !important; }
+    
+    /* Back to top button */
+    .back-to-top { 
+        right: 15px !important; 
+        bottom: 15px !important; 
+        width: 40px !important; 
+        height: 40px !important; 
+    }
+    
+    /* Breadcrumbs */
+    .breadcrumb { font-size: 0.85rem !important; }
+    .breadcrumb-item + .breadcrumb-item { padding-left: 0.3rem !important; }
+    
+    /* Modal and overlays */
+    .modal-content { margin: 10px !important; }
+    .overlay-toast-card, .overlay-confirm-card { 
+        width: 95vw !important; 
+        margin: 0 10px !important;
+    }
+    
+    /* Toast notifications */
+    .app-toast-container { 
+        top: 10px !important; 
+        right: 10px !important; 
+        left: 10px !important;
+    }
+    .app-toast { 
+        max-width: 100% !important; 
+        min-width: unset !important;
+    }
+    
+    /* Tables - make them scroll horizontally */
+    .table-responsive { 
+        margin-bottom: 1rem;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    .table { 
+        font-size: 0.85rem !important;
+        min-width: 600px;
+    }
+    .table th, .table td { 
+        padding: 0.5rem !important;
+        white-space: nowrap;
+    }
+    
+    /* Carousel controls */
+    .carousel-control-prev, .carousel-control-next { 
+        width: 35px !important; 
+        height: 35px !important; 
+    }
+    .carousel-control-prev { margin-left: 10px !important; }
+    .carousel-control-next { margin-right: 10px !important; }
+    
+    /* Testimonials */
+    .testimonial .owl-nav .owl-prev,
+    .testimonial .owl-nav .owl-next { 
+        position: relative !important; 
+        top: 0 !important; 
+        right: auto !important;
+        margin: 0.5rem !important;
+        display: inline-block !important;
+    }
+    
+    /* Footer */
+    .footer .footer-item { margin-bottom: 1.5rem; }
+    .footer .btn-link { font-size: 0.9rem !important; line-height: 1.8 !important; }
+    
+    /* Fix navbar brand on very small screens */
+    .navbar-brand h1 { font-size: 1.5rem !important; }
+    .navbar-brand p { display: none; }
+    
+    /* Ensure dropdown menus work on mobile */
+    .dropdown-menu { 
+        position: absolute !important;
+        min-width: 200px !important;
+    }
+}
+
+/* Small Devices (Landscape Phones, 576px and up) */
+@media (min-width: 576px) and (max-width: 767.98px) {
+    h1.display-3 { font-size: 2.5rem !important; }
+    h1.display-6 { font-size: 1.75rem !important; }
+    
+    .hero-header { min-height: 65vh !important; }
+    
+    .btn { font-size: 1rem !important; }
+    
+    .featurs .featurs-icon { 
+        width: 100px !important; 
+        height: 100px !important; 
+    }
+}
+
+/* Medium Devices (Tablets, 768px and up) */
+@media (min-width: 768px) and (max-width: 991.98px) {
+    h1.display-3 { font-size: 3rem !important; }
+    
+    .hero-header { min-height: 70vh !important; }
+    
+    .navbar { height: 80px !important; }
+    
+    .py-5 { padding-top: 3rem !important; padding-bottom: 3rem !important; }
+    
+    .featurs .featurs-icon { 
+        width: 110px !important; 
+        height: 110px !important; 
+    }
+}
+
+/* Mobile-specific utilities */
+@media (max-width: 991.98px) {
+    /* Stack elements vertically */
+    .mobile-stack { 
+        flex-direction: column !important;
+    }
+    
+    /* Full width on mobile */
+    .mobile-full-width { 
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+    
+    /* Hide on mobile */
+    .mobile-hidden { 
+        display: none !important;
+    }
+    
+    /* Center text on mobile */
+    .mobile-center { 
+        text-align: center !important;
+    }
+    
+    /* Reduce padding on mobile */
+    .mobile-px-2 { 
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
+    }
+    
+    /* Spacing utilities */
+    .gap-mobile-2 { gap: 0.5rem !important; }
+    .gap-mobile-3 { gap: 1rem !important; }
+}
+
+/* Touch-friendly improvements for all mobile devices */
+@media (max-width: 991.98px) {
+    /* Increase tap target sizes */
+    a, button, .btn, input[type="submit"], input[type="button"] {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    /* Better spacing for touch */
+    .nav-link { 
+        padding: 0.75rem 1rem !important;
+        margin: 0.25rem 0;
+    }
+    
+    /* Prevent text selection issues on touch */
+    .btn, .nav-link, .card {
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+        -webkit-touch-callout: none;
+    }
+    
+    /* Smooth scrolling on iOS */
+    body {
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+/* Landscape orientation optimizations */
+@media (max-width: 991.98px) and (orientation: landscape) {
+    .hero-header { 
+        min-height: 80vh !important;
+        padding-top: 1rem !important;
+        padding-bottom: 1rem !important;
+    }
+    
+    .page-header { 
+        padding-top: 1.5rem !important;
+        padding-bottom: 1.5rem !important;
+    }
+    
+    .navbar { height: 70px !important; }
+}
+
+/* High DPI displays (Retina) - sharper icons and images */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .featurs-icon i,
+    .fa, .fas, .far, .fab {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+}
+

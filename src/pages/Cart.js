@@ -77,28 +77,29 @@ const Cart = () => {
               <tbody>
                 {cart.items.map((item) => (
                   <tr key={item._id}>
-                    <th scope="row">
-                      <div className="d-flex align-items-center">
+                    <td data-label="Product">
+                      <div className="d-flex align-items-center justify-content-center">
                         <img 
                           src={item.product.image || '/img/vegetable-item-3.png'} 
-                          className="img-fluid me-5 rounded-circle" 
+                          className="img-fluid rounded-circle" 
                           style={{ width: '80px', height: '80px' }} 
                           alt={item.product.name}
                         />
                       </div>
-                    </th>
-                    <td>
-                      <p className="mb-0 mt-4">{item.product.name}</p>
                     </td>
-                    <td>
-                      <p className="mb-0 mt-4">{formatCurrency(item.product.price)}</p>
+                    <td data-label="Name">
+                      <p className="mb-0 mt-4 mt-md-0">{item.product.name}</p>
                     </td>
-                    <td>
-                      <div className="input-group quantity mt-4" style={{ width: '100px' }}>
+                    <td data-label="Price">
+                      <p className="mb-0 mt-4 mt-md-0">{formatCurrency(item.product.price)}</p>
+                    </td>
+                    <td data-label="Quantity">
+                      <div className="input-group quantity mt-4 mt-md-0" style={{ width: '100px' }}>
                         <div className="input-group-btn">
                           <button 
                             className="btn btn-sm btn-minus rounded-circle bg-light border"
                             onClick={() => handleQuantityChange(item._id, item.quantity - 1)}
+                            aria-label="Decrease quantity"
                           >
                             <i className="fa fa-minus"></i>
                           </button>
@@ -108,26 +109,29 @@ const Cart = () => {
                           className="form-control form-control-sm text-center border-0" 
                           value={item.quantity}
                           readOnly
+                          aria-label="Quantity"
                         />
                         <div className="input-group-btn">
                           <button 
                             className="btn btn-sm btn-plus rounded-circle bg-light border"
                             onClick={() => handleQuantityChange(item._id, item.quantity + 1)}
+                            aria-label="Increase quantity"
                           >
                             <i className="fa fa-plus"></i>
                           </button>
                         </div>
                       </div>
                     </td>
-                    <td>
-                      <p className="mb-0 mt-4">
+                    <td data-label="Total">
+                      <p className="mb-0 mt-4 mt-md-0">
                         {formatCurrency(item.product.price * item.quantity)}
                       </p>
                     </td>
-                    <td>
+                    <td data-label="Remove">
                       <button 
-                        className="btn btn-md rounded-circle bg-light border mt-4"
+                        className="btn btn-md rounded-circle bg-light border mt-4 mt-md-0"
                         onClick={() => handleRemove(item._id)}
+                        aria-label="Remove item from cart"
                       >
                         <i className="fa fa-times text-danger"></i>
                       </button>
@@ -137,13 +141,14 @@ const Cart = () => {
               </tbody>
             </table>
           </div>
-          <div className="mt-5">
+          <div className="mt-5 coupon-section d-flex flex-wrap align-items-center gap-3">
             <input 
               type="text" 
-              className="border-0 border-bottom rounded me-5 py-3 mb-4" 
+              className="border-0 border-bottom rounded py-3 flex-grow-1" 
               placeholder="Coupon Code"
+              style={{ minWidth: '200px' }}
             />
-                <button 
+            <button 
               className="btn btn-primary rounded-pill px-4 py-3 btn-glow" 
               type="button"
             >
@@ -151,8 +156,7 @@ const Cart = () => {
             </button>
           </div>
           <div className="row g-4 justify-content-end">
-            <div className="col-8"></div>
-            <div className="col-sm-8 col-md-7 col-lg-6 col-xl-4">
+            <div className="col-12 col-md-8 col-lg-6 col-xl-4">
               <div className="bg-light rounded">
                 <div className="p-4">
                   <h1 className="display-6 mb-4">Cart <span className="fw-normal">Total</span></h1>
