@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { adminService, categoryService, uploadService } from '../../services';
 import AdminLayout from '../../components/admin/AdminLayout';
@@ -164,12 +164,12 @@ const AdminDashboard = () => {
       {/* Stats Cards */}
       <div className="row g-3 mb-4">
             <div className="col-12 col-sm-6 col-lg-3">
-              <div className="card bg-primary text-white h-100">
+              <div className="card bg-primary text-white h-100 shadow-sm">
                 <div className="card-body">
                   <div className="d-flex justify-content-between align-items-start">
                     <div>
-                      <h6 className="card-title text-uppercase small mb-2">Total Users</h6>
-                      <h2 className="mb-1">{stats?.users?.totalUsers || 0}</h2>
+                      <h6 className="card-title text-uppercase small mb-2 opacity-90">Total Users</h6>
+                      <h2 className="mb-1 fw-bold">{stats?.users?.totalUsers || 0}</h2>
                       <small className="opacity-75">Active: {stats?.users?.activeUsers || 0}</small>
                     </div>
                     <i className="fas fa-users fa-2x opacity-50"></i>
@@ -178,12 +178,12 @@ const AdminDashboard = () => {
               </div>
             </div>
             <div className="col-12 col-sm-6 col-lg-3">
-              <div className="card bg-success text-white h-100">
+              <div className="card bg-success text-white h-100 shadow-sm">
                 <div className="card-body">
                   <div className="d-flex justify-content-between align-items-start">
                     <div>
-                      <h6 className="card-title text-uppercase small mb-2">Total Products</h6>
-                      <h2 className="mb-1">{stats?.products?.totalProducts || 0}</h2>
+                      <h6 className="card-title text-uppercase small mb-2 opacity-90">Total Products</h6>
+                      <h2 className="mb-1 fw-bold">{stats?.products?.totalProducts || 0}</h2>
                       <small className="opacity-75">In Stock</small>
                     </div>
                     <i className="fas fa-box fa-2x opacity-50"></i>
@@ -192,12 +192,12 @@ const AdminDashboard = () => {
               </div>
             </div>
             <div className="col-12 col-sm-6 col-lg-3">
-              <div className="card bg-warning text-white h-100">
+              <div className="card bg-warning text-white h-100 shadow-sm">
                 <div className="card-body">
                   <div className="d-flex justify-content-between align-items-start">
                     <div>
-                      <h6 className="card-title text-uppercase small mb-2">Total Orders</h6>
-                      <h2 className="mb-1">{stats?.orders?.totalOrders || 0}</h2>
+                      <h6 className="card-title text-uppercase small mb-2 opacity-90">Total Orders</h6>
+                      <h2 className="mb-1 fw-bold">{stats?.orders?.totalOrders || 0}</h2>
                       <small className="opacity-75">All time</small>
                     </div>
                     <i className="fas fa-shopping-cart fa-2x opacity-50"></i>
@@ -206,12 +206,12 @@ const AdminDashboard = () => {
               </div>
             </div>
             <div className="col-12 col-sm-6 col-lg-3">
-              <div className="card bg-info text-white h-100">
+              <div className="card bg-info text-white h-100 shadow-sm">
                 <div className="card-body">
                   <div className="d-flex justify-content-between align-items-start">
                     <div>
-                      <h6 className="card-title text-uppercase small mb-2">Revenue</h6>
-                      <h2 className="mb-1 fs-4">{formatCurrency(stats?.orders?.totalRevenue || 0)}</h2>
+                      <h6 className="card-title text-uppercase small mb-2 opacity-90">Revenue</h6>
+                      <h2 className="mb-1 fw-bold fs-4">{formatCurrency(stats?.orders?.totalRevenue || 0)}</h2>
                       <small className="opacity-75">Total</small>
                     </div>
                     <i className="fas fa-dollar-sign fa-2x opacity-50"></i>
@@ -222,50 +222,80 @@ const AdminDashboard = () => {
           </div>
 
       {/* Categories */}
-      <div className="d-flex justify-content-between align-items-center flex-wrap gap-2 mt-2 mb-3">
+      <div className="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
         <h2 className="mb-0 h4">Categories</h2>
         <button className="btn btn-sm btn-primary" onClick={openCreateCategory}>
-          <i className="fas fa-plus me-2"></i>
+          <i className="fas fa-plus me-1"></i>
           <span className="d-none d-sm-inline">Add Category</span>
-          <span className="d-sm-none">Add</span>
+          <span className="d-inline d-sm-none">Add</span>
         </button>
       </div>
-      {catError && <p className="text-danger small">{catError}</p>}
+      {catError && <div className="alert alert-danger alert-sm">{catError}</div>}
       <div className="table-responsive">
-        <table className="table table-striped table-sm">
+        <table className="table table-striped table-sm table-hover">
           <thead>
             <tr>
               <th>Name</th>
-              <th className="col-optional">Status</th>
-              <th className="col-optional">Updated</th>
-              <th>Actions</th>
+              <th className="col-optional d-none d-md-table-cell">Status</th>
+              <th className="col-optional d-none d-lg-table-cell">Updated</th>
+              <th style={{width: '120px'}}>Actions</th>
             </tr>
           </thead>
           <tbody>
             {catLoading ? (
-              <tr><td colSpan="4" className="text-center py-4"><div className="spinner-border" /></td></tr>
+              <tr><td colSpan="4" className="text-center py-4">
+                <div className="spinner-border spinner-border-sm" role="status">
+                  <span className="visually-hidden">Loading...</span>
+                </div>
+              </td></tr>
             ) : categories.length === 0 ? (
-              <tr><td colSpan="4" className="text-center">No categories found</td></tr>
+              <tr><td colSpan="4" className="text-center text-muted py-3">No categories found</td></tr>
             ) : (
               categories.map(c => (
                 <tr key={c._id}>
-                  <td>{c.name}</td>
-                  <td className="col-optional">
-                    <span className={`badge bg-${c.isActive ? 'success' : 'secondary'}`}>{c.isActive ? 'Active' : 'Inactive'}</span>
+                  <td className="fw-medium">{c.name}</td>
+                  <td className="col-optional d-none d-md-table-cell">
+                    <span className={`badge bg-${c.isActive ? 'success' : 'secondary'}`}>
+                      {c.isActive ? 'Active' : 'Inactive'}
+                    </span>
                   </td>
-                  <td className="col-optional">{new Date(c.updatedAt).toLocaleString()}</td>
+                  <td className="col-optional d-none d-lg-table-cell">
+                    <small className="text-muted">{new Date(c.updatedAt).toLocaleString()}</small>
+                  </td>
                   <td>
-                    <div className="d-none d-md-flex gap-2">
-                      <button className="btn btn-sm btn-outline-primary" onClick={() => openEditCategory(c)}><i className="fas fa-edit"></i></button>
-                      <button className="btn btn-sm btn-outline-secondary" onClick={() => toggleActive(c)}>{c.isActive ? 'Deactivate' : 'Activate'}</button>
-                      <button className="btn btn-sm btn-outline-danger" onClick={() => deleteCategory(c)}><i className="fas fa-trash"></i></button>
+                    <div className="d-none d-md-flex gap-1">
+                      <button className="btn btn-sm btn-outline-primary" onClick={() => openEditCategory(c)} title="Edit">
+                        <i className="fas fa-edit"></i>
+                      </button>
+                      <button className="btn btn-sm btn-outline-secondary" onClick={() => toggleActive(c)} title={c.isActive ? 'Deactivate' : 'Activate'}>
+                        <i className={`fas fa-${c.isActive ? 'toggle-on' : 'toggle-off'}`}></i>
+                      </button>
+                      <button className="btn btn-sm btn-outline-danger" onClick={() => deleteCategory(c)} title="Delete">
+                        <i className="fas fa-trash"></i>
+                      </button>
                     </div>
                     <div className="dropdown d-md-none">
-                      <button className="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">Actions</button>
-                      <ul className="dropdown-menu">
-                        <li><button className="dropdown-item" onClick={() => openEditCategory(c)}><i className="fas fa-edit me-2"></i>Edit</button></li>
-                        <li><button className="dropdown-item" onClick={() => toggleActive(c)}>{c.isActive ? 'Deactivate' : 'Activate'}</button></li>
-                        <li><button className="dropdown-item text-danger" onClick={() => deleteCategory(c)}><i className="fas fa-trash me-2"></i>Delete</button></li>
+                      <button className="btn btn-sm btn-outline-secondary dropdown-toggle w-100" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i className="fas fa-ellipsis-v"></i>
+                      </button>
+                      <ul className="dropdown-menu dropdown-menu-end">
+                        <li>
+                          <button className="dropdown-item" onClick={() => openEditCategory(c)}>
+                            <i className="fas fa-edit me-2"></i>Edit
+                          </button>
+                        </li>
+                        <li>
+                          <button className="dropdown-item" onClick={() => toggleActive(c)}>
+                            <i className={`fas fa-${c.isActive ? 'toggle-off' : 'toggle-on'} me-2`}></i>
+                            {c.isActive ? 'Deactivate' : 'Activate'}
+                          </button>
+                        </li>
+                        <li><hr className="dropdown-divider" /></li>
+                        <li>
+                          <button className="dropdown-item text-danger" onClick={() => deleteCategory(c)}>
+                            <i className="fas fa-trash me-2"></i>Delete
+                          </button>
+                        </li>
                       </ul>
                     </div>
                   </td>
@@ -328,15 +358,20 @@ const AdminDashboard = () => {
       {/* Recent Orders Table */}
       <div className="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3 mt-4">
         <h2 className="mb-0 h4">Recent Orders</h2>
+        <Link to="/admin/orders" className="btn btn-sm btn-outline-primary">
+          <span className="d-none d-sm-inline">View All Orders</span>
+          <span className="d-inline d-sm-none">View All</span>
+          <i className="fas fa-arrow-right ms-1"></i>
+        </Link>
       </div>
       <div className="table-responsive">
-            <table className="table table-striped table-sm">
+            <table className="table table-striped table-sm table-hover">
               <thead>
                 <tr>
-                  <th>Order ID</th>
+                  <th style={{width: '100px'}}>Order ID</th>
                   <th className="d-none d-md-table-cell">Customer</th>
                   <th>Status</th>
-                  <th>Total</th>
+                  <th className="text-end">Total</th>
                   <th className="d-none d-lg-table-cell">Date</th>
                 </tr>
               </thead>
@@ -344,24 +379,36 @@ const AdminDashboard = () => {
                 {stats?.orders?.recentOrders && stats.orders.recentOrders.length > 0 ? (
                   stats.orders.recentOrders.map((order) => (
                     <tr key={order._id}>
-                      <td className="text-truncate" style={{ maxWidth: '120px' }}>
-                        <small>{order._id.slice(-8)}</small>
+                      <td className="text-truncate" style={{ maxWidth: '100px' }}>
+                        <small className="font-monospace">#{order._id.slice(-8)}</small>
                       </td>
-                      <td className="d-none d-md-table-cell">{order.user?.name || order.user?.email || '-'}</td>
+                      <td className="d-none d-md-table-cell">
+                        <span className="text-truncate d-inline-block" style={{maxWidth: '150px'}}>
+                          {order.user?.name || order.user?.email || '-'}
+                        </span>
+                      </td>
                       <td>
-                        <span className={`badge bg-${order.status === 'delivered' ? 'success' : order.status === 'pending' ? 'warning' : 'info'}`}>
+                        <span className={`badge bg-${
+                          order.status === 'delivered' ? 'success' : 
+                          order.status === 'pending' ? 'warning text-dark' : 
+                          order.status === 'cancelled' ? 'danger' :
+                          'info'
+                        }`}>
                           {order.status}
                         </span>
                       </td>
-                      <td className="fw-bold">{formatCurrency(order.totalPrice)}</td>
+                      <td className="fw-bold text-end">{formatCurrency(order.totalPrice)}</td>
                       <td className="d-none d-lg-table-cell">
-                        <small>{formatDate(order.createdAt)}</small>
+                        <small className="text-muted">{formatDate(order.createdAt)}</small>
                       </td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="5" className="text-center py-4 text-muted">No recent orders</td>
+                    <td colSpan="5" className="text-center py-4 text-muted">
+                      <i className="fas fa-inbox fa-2x mb-2 d-block opacity-50"></i>
+                      No recent orders
+                    </td>
                   </tr>
                 )}
               </tbody>

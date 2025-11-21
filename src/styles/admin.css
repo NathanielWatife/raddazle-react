@@ -62,6 +62,22 @@
     width: 100%;
     margin: 2px 0;
   }
+  
+  /* Table hover effects */
+  .table-hover tbody tr:hover {
+    background-color: rgba(122, 162, 247, 0.08);
+  }
+  
+  /* Badge sizing in tables */
+  .table .badge {
+    font-size: 0.7rem;
+    padding: 4px 8px;
+  }
+  
+  /* Font monospace for IDs */
+  .font-monospace {
+    font-family: 'Courier New', Courier, monospace;
+  }
 }
 
 /* Make table controls slightly more compact on small screens */
@@ -94,6 +110,40 @@
   
   .admin-actions .btn {
     width: 100%;
+  }
+  
+  /* Shadow improvements for cards */
+  .shadow-sm {
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15) !important;
+  }
+  
+  /* Icon sizing in buttons */
+  .btn i.fas,
+  .btn i.far {
+    font-size: 0.875rem;
+  }
+  
+  /* Dropdown menu improvements */
+  .dropdown-menu {
+    min-width: 180px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+  
+  .dropdown-item {
+    padding: 10px 16px;
+    transition: background-color 0.2s;
+  }
+  
+  .dropdown-item:active {
+    background-color: rgba(122, 162, 247, 0.2);
+  }
+  
+  /* Alert improvements */
+  .alert-sm {
+    padding: 10px 12px;
+    font-size: 0.875rem;
+    margin-bottom: 15px;
   }
 }
 
@@ -574,16 +624,54 @@
   /* Dashboard stat cards */
   .admin-dark .card {
     margin-bottom: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   }
   
   .admin-dark .card-body {
     padding: 15px;
   }
   
+  /* Stat card specific */
+  .admin-dark .card.bg-primary,
+  .admin-dark .card.bg-success,
+  .admin-dark .card.bg-warning,
+  .admin-dark .card.bg-info {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  }
+  
   /* List groups in mobile */
   .admin-dark .list-group-item {
     padding: 12px 15px;
     font-size: 0.9rem;
+  }
+  
+  /* Better spacing for dashboard sections */
+  .admin-dark .mb-3 {
+    margin-bottom: 15px !important;
+  }
+  
+  .admin-dark .mb-4 {
+    margin-bottom: 20px !important;
+  }
+}
+
+/* Small stat cards on very small screens */
+@media (max-width: 360px) {
+  .admin-dark .card-body h6 {
+    font-size: 0.7rem !important;
+  }
+  
+  .admin-dark .card-body h2 {
+    font-size: 1.35rem !important;
+  }
+  
+  .admin-dark .card-body small {
+    font-size: 0.7rem !important;
+  }
+  
+  .admin-dark .card-body .fas {
+    font-size: 1rem !important;
   }
 }
 
@@ -767,12 +855,46 @@
   .admin-dark .btn:active,
   .admin-dark .nav-link:active {
     opacity: 0.7;
+    transform: scale(0.98);
   }
   
   /* Remove hover effects on touch */
   .admin-dark .btn:hover,
   .admin-dark .nav-link:hover {
     transform: none;
+  }
+  
+  /* Dropdown toggle - larger tap target */
+  .admin-dark .dropdown-toggle {
+    min-height: 44px;
+    padding: 10px 15px;
+  }
+  
+  /* Table row taps */
+  .admin-dark table tr:active {
+    background-color: rgba(255,255,255,0.05);
+  }
+}
+
+/* ================= Loading & Empty States Mobile ================ */
+@media (max-width: 575.98px) {
+  .admin-dark .spinner-border {
+    width: 2rem;
+    height: 2rem;
+  }
+  
+  .admin-dark .text-center.py-4 {
+    padding: 2rem 1rem !important;
+  }
+  
+  .admin-dark .text-muted {
+    font-size: 0.875rem;
+  }
+  
+  /* Empty state messages */
+  .admin-dark tbody td[colspan] {
+    padding: 30px 15px !important;
+    font-size: 0.9rem;
   }
 }
 
