@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
+import React, { createContext, useState, useContext, useEffect, useCallback, useRef } from 'react';
 import api from '../services/api';
 
 const AuthContext = createContext();
@@ -14,6 +14,7 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const authCheckInProgress = useRef(false);
 
   const fetchCurrentUser = useCallback(async () => {
     try {
@@ -30,18 +31,25 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const checkAuth = useCallback(async () => {
+    if (authCheckInProgress.current) {
+      return; // Skip if already checking
+    }
+    authCheckInProgress.current = true;
     try {
       await fetchCurrentUser();
     } catch (error) {
       setUser(null);
     } finally {
       setLoading(false);
+      authCheckInProgress.current = false;
     }
   }, [fetchCurrentUser]);
 
   useEffect(() => {
     checkAuth();
-  }, [checkAuth]);
+    // Only run once on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const refreshUser = async () => fetchCurrentUser();
 
