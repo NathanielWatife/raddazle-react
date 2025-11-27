@@ -51,37 +51,12 @@ const Navbar = () => {
 
   return (
     <div className={`container-fluid fixed-top ${scrolled ? 'is-scrolled' : ''}`}>
-          <div className="container topbar bg-primary d-none d-lg-block">
-            <div className="d-flex justify-content-between">
-              <div className="top-info ps-2">
-                <small className="me-3">
-                  <i className="fas fa-map-marker-alt me-2 text-secondary"></i>
-                  <Link to="#" className="text-white">Lagos, Nigeria</Link>
-                </small>
-                <small className="me-3">
-                  <i className="fas fa-envelope me-2 text-secondary"></i>
-                  <Link to="mailto:support@raddazle.com" className="text-white">support@raddazle.com</Link>
-                </small>
-              </div>
-              <div className="top-link pe-2">
-                <Link to="/privacy" className="text-white">
-                  <small className="text-white mx-2">Privacy Policy</small>/
-                </Link>
-                <Link to="/terms" className="text-white">
-                  <small className="text-white mx-2">Terms &amp; Conditions</small>/
-                </Link>
-                <Link to="/return" className="text-white">
-                  <small className="text-white ms-2">Returns &amp; Refunds</small>
-                </Link>
-              </div>
-            </div>
-          </div>
-      
+
       <div className="container px-0">
         <nav className="navbar navbar-light bg-white navbar-expand-lg">
           <Link to="/" className="navbar-brand hover-shine">
-            <h1 className="text-primary display-6 brand-title">Raddazle</h1>
-            <p className="text-muted mb-0 brand-subtitle" style={{ fontSize: '0.8rem', marginTop: '-8px' }}>Luxury Fragrances</p>
+            <h1 className="text-primary display-6 brand-title">Ray Dazzle</h1>
+            <p className="text-muted mb-0 brand-subtitle" style={{ fontSize: '0.8rem', marginTop: '-8px' }}>Products that elude luxury</p>
           </Link>
           <button 
             className="navbar-toggler py-2 px-3" 

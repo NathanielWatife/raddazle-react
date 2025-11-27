@@ -101,7 +101,7 @@ const Shop = () => {
       {/* Fruits Shop Start */}
       <AnimatedSection className="container-fluid fruite py-5" animationClass="animate-fade-up">
         <div className="container py-5">
-          <h1 className="mb-4">Luxury Fragrance Collection</h1>
+          <h1 className="mb-4">Signature grooming and hygiene collection</h1>
           <div className="row g-4">
             <div className="col-lg-12">
               <div className="row g-3 g-md-4 align-items-stretch">

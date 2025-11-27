@@ -47,7 +47,7 @@ const Contact = () => {
                 <div className="text-center mx-auto" style={{ maxWidth: '700px' }}>
                   <h1 className="text-primary">Get in touch</h1>
                   <p className="mb-4">
-                    Have questions about our fragrances? Need help choosing the perfect scent? 
+                    Have questions about our collections? Whether you're choosing grooming essentials or elevating your home-care routine, our experts are here to offer refined guidance and help you select the perfect products for a cleaner, more elevated everyday experience. 
                     Our fragrance experts are here to help you find your signature scent.
                   </p>
                 </div>

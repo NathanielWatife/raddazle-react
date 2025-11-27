@@ -11,8 +11,8 @@ const Footer = () => {
             <div className="row g-4">
               <div className="col-lg-3">
                 <Link to="/">
-                  <h1 className="text-primary mb-0">Raddazle</h1>
-                  <p className="text-secondary mb-0">Luxury Fragrances</p>
+                  <h1 className="text-primary mb-0">Ray Dazzle</h1>
+                  <p className="text-secondary mb-0">Products that elude luxury</p>
                 </Link>
               </div>
               <div className="col-lg-6">
@@ -54,8 +54,7 @@ const Footer = () => {
               <div className="footer-item">
                 <h4 className="text-light mb-3">Why Choose Raddazle?</h4>
                 <p className="mb-4">
-                  Authentic luxury fragrances at unbeatable prices. From designer perfumes to niche scents. 
-                  100% genuine products guaranteed!
+                  Every product is made with safe, efficent and reliable ingredents that deliver results. Our brand consistently delivers convenience, confidence and cleanliness.
                 </p>
                 <Link to="/shop" className="btn border-secondary py-2 px-4 rounded-pill text-primary hover-shine btn-glow">
                   Shop Now
@@ -105,7 +104,7 @@ const Footer = () => {
             <div className="col-md-6 text-center text-md-start mb-3 mb-md-0">
               <span className="text-light">
                 <Link to="/" className="text-primary">
-                  <i className="fas fa-copyright text-primary me-2"></i>Raddazle
+                  <i className="fas fa-copyright text-primary me-2"></i>Ray Dazzle
                 </Link>
                 , All rights reserved.
               </span>
