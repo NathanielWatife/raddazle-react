@@ -15,9 +15,30 @@ const api = axios.create({
   }
 });
 
-// Request interceptor
+// Helper functions to manage auth token
+export const setAuthToken = (token) => {
+  if (token) {
+    localStorage.setItem('authToken', token);
+  } else {
+    localStorage.removeItem('authToken');
+  }
+};
+
+export const getAuthToken = () => {
+  return localStorage.getItem('authToken');
+};
+
+export const clearAuthToken = () => {
+  localStorage.removeItem('authToken');
+};
+
+// Request interceptor - add token to Authorization header
 api.interceptors.request.use(
   (config) => {
+    const token = getAuthToken();
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
     return config;
   },
   (error) => {

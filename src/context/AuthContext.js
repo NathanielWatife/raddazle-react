@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect, useCallback, useRef } from 'react';
-import api from '../services/api';
+import api, { setAuthToken, clearAuthToken, getAuthToken } from '../services/api';
 
 const AuthContext = createContext();
 
@@ -24,6 +24,7 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       if (error.response?.status === 401) {
         setUser(null);
+        clearAuthToken(); // Clear invalid token
         return null;
       }
       throw error;
@@ -36,9 +37,15 @@ export const AuthProvider = ({ children }) => {
     }
     authCheckInProgress.current = true;
     try {
-      await fetchCurrentUser();
+      // Only check auth if we have a token stored
+      if (getAuthToken()) {
+        await fetchCurrentUser();
+      } else {
+        setUser(null);
+      }
     } catch (error) {
       setUser(null);
+      clearAuthToken();
     } finally {
       setLoading(false);
       authCheckInProgress.current = false;
@@ -55,6 +62,10 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     const response = await api.post('/auth/login', { email, password });
+    // Store the token from the response
+    if (response.data.token) {
+      setAuthToken(response.data.token);
+    }
     setUser(response.data.user);
     return response.data;
   };
@@ -66,8 +77,13 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = async () => {
-    await api.post('/auth/logout');
-    setUser(null);
+    try {
+      await api.post('/auth/logout');
+    } finally {
+      // Always clear local state and token, even if API call fails
+      setUser(null);
+      clearAuthToken();
+    }
   };
 
   const value = {
