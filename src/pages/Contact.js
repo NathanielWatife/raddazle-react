@@ -52,6 +52,7 @@ const Contact = () => {
                   </p>
                 </div>
               </div>
+              {/* Google Maps - Commented out
               <div className="col-lg-12">
                 <div className="h-100 rounded">
                   <iframe 
@@ -64,6 +65,7 @@ const Contact = () => {
                   ></iframe>
                 </div>
               </div>
+              */}
               <div className="col-lg-7">
                 <form onSubmit={handleSubmit}>
                   <input

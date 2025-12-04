@@ -75,7 +75,8 @@
 }
 
 /*** Topbar Start ***/
-.fixed-top {
+.fixed-top,
+.navbar-wrapper {
     transition: 0.5s;
     background: var(--bs-white);
     border: 0;
@@ -124,18 +125,25 @@
 }
 
 .navbar {
-    height: 100px;
-    border-bottom: 1px solid rgba(255, 255, 255, .1);
+    height: 90px;
+    border-bottom: none;
+}
+
+@media (max-width: 991.98px) {
+    .navbar { 
+        height: 70px; 
+        padding: 0 10px;
+    }
 }
 
 @media (max-width: 576px) {
-    .navbar { height: auto; }
+    .navbar { height: 64px; }
     .navbar .navbar-nav .nav-link { padding: 8px 10px; font-size: 15px; }
 }
 
 /* Navbar brand adjustments on phones */
 @media (max-width: 576px) {
-    .brand-title { font-size: 1.5rem !important; line-height: 1.2; }
+    .brand-title { font-size: 1.35rem !important; line-height: 1.2; }
     .brand-subtitle { display: none; }
 }
 
@@ -244,14 +252,21 @@
 @media (min-width: 992px) {
     .hero-header,
     .page-header {
-        margin-top: 152px !important;
+        margin-top: 90px !important;
     }
 }
 
-@media (max-width: 992px) {
+@media (max-width: 991.98px) {
     .hero-header,
     .page-header {
-        margin-top: 97px !important;
+        margin-top: 70px !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .hero-header,
+    .page-header {
+        margin-top: 64px !important;
     }
 }
 /*** Hero Header end ***/
