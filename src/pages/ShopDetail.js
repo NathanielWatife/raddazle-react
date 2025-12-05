@@ -120,11 +120,12 @@ const ShopDetail = () => {
             <div className="col-lg-8 col-xl-9">
               <div className="row g-4">
                 <div className="col-lg-6">
-                  <div className="border rounded">
+                  <div className="border rounded" style={{ backgroundColor: '#f5f5f5' }}>
                     <img 
-                      src={getImageUrl(product.image) || '/img/product-placeholder.jpg'} 
+                      src={getImageUrl(product.image)} 
                       className="img-fluid rounded" 
                       alt={product.name}
+                      style={{ minHeight: '300px', objectFit: 'cover', width: '100%' }}
                       onError={(e) => {
                         e.target.onerror = null;
                         e.target.src = '/img/product-placeholder.jpg';

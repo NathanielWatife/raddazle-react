@@ -1,9 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import AnimatedSection from './AnimatedSection';
 import { formatCurrency } from '../utils/currency';
 import { getImageUrl } from '../services/api';
 
+const PLACEHOLDER = '/img/product-placeholder.jpg';
+
 const ProductCard = ({ product, onAddToCart }) => {
+  const [imgSrc, setImgSrc] = useState(getImageUrl(product.image) || PLACEHOLDER);
+  const [imgError, setImgError] = useState(false);
+
   const handleAddToCart = (e) => {
     e.preventDefault();
     if (onAddToCart) {
@@ -11,21 +16,23 @@ const ProductCard = ({ product, onAddToCart }) => {
     }
   };
 
-  // Get the proper image URL
-  const imageUrl = getImageUrl(product.image);
+  const handleImageError = () => {
+    if (!imgError) {
+      setImgError(true);
+      setImgSrc(PLACEHOLDER);
+    }
+  };
 
   return (
     <AnimatedSection className="col-12 col-md-6 col-lg-4 col-xl-3" animationClass="animate-fade-up">
       <div className="rounded position-relative fruite-item hover-lift hover-shine">
         <div className="fruite-img">
           <img 
-            src={imageUrl || '/img/product-placeholder.jpg'} 
+            src={imgSrc} 
             className="img-fluid w-100 rounded-top" 
             alt={product.name}
-            onError={(e) => {
-              e.target.onerror = null;
-              e.target.src = '/img/product-placeholder.jpg';
-            }}
+            onError={handleImageError}
+            style={{ minHeight: '200px', objectFit: 'cover', backgroundColor: '#f5f5f5' }}
           />
         </div>
         <div className="text-white bg-secondary px-3 py-1 rounded position-absolute" 

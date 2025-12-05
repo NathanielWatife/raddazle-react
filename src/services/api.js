@@ -11,21 +11,43 @@ if (raw && typeof raw === 'string') {
   apiBaseUrl = trimmed.replace(/\/api$/, '');
 }
 
+// Placeholder image path
+const PLACEHOLDER_IMAGE = '/img/product-placeholder.jpg';
+
 // Helper to get the correct image URL
 export const getImageUrl = (imagePath) => {
-  if (!imagePath) return null;
+  // Return placeholder for empty/null/undefined
+  if (!imagePath || imagePath === '' || imagePath === 'null' || imagePath === 'undefined') {
+    return PLACEHOLDER_IMAGE;
+  }
   
-  // If it's already a full URL (Cloudinary, etc.), return as-is
+  // If it's a Cloudinary URL (contains cloudinary.com or res.cloudinary), use as-is
+  if (imagePath.includes('cloudinary.com') || imagePath.includes('res.cloudinary')) {
+    return imagePath;
+  }
+  
+  // If it's already a full URL but points to vercel uploads (which are ephemeral), use placeholder
+  if (imagePath.includes('vercel.app/uploads') || imagePath.includes('/tmp/uploads')) {
+    // Vercel ephemeral storage - these images don't persist
+    return PLACEHOLDER_IMAGE;
+  }
+  
+  // If it's any other full URL (http/https), return as-is
   if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
     return imagePath;
   }
   
-  // If it's a relative path like /uploads/..., prepend the API base URL
+  // If it's a relative path like /uploads/..., it's also ephemeral on Vercel
   if (imagePath.startsWith('/uploads')) {
-    return apiBaseUrl ? `${apiBaseUrl}${imagePath}` : imagePath;
+    // For local dev, try to prepend API base URL
+    // For production on Vercel, these won't work - return placeholder
+    if (apiBaseUrl && !apiBaseUrl.includes('vercel.app')) {
+      return `${apiBaseUrl}${imagePath}`;
+    }
+    return PLACEHOLDER_IMAGE;
   }
   
-  // Otherwise return as-is (might be a local public path)
+  // Otherwise return as-is (might be a local public path like /img/...)
   return imagePath;
 };
 
