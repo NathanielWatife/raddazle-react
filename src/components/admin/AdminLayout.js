@@ -40,16 +40,36 @@ const AdminLayout = ({ title, children }) => {
     <div className={`admin-dark ${sidebarOpen ? 'admin-has-sidebar-open' : ''}`}>
       <div className="d-flex">
         {/* Sidebar */}
-        <nav className="sidebar bg-dark min-vh-100 border-end text-white">
+        <nav className="sidebar d-none d-md-block">
           <div className="position-sticky pt-3">
-            <div className="px-3 d-flex justify-content-between align-items-center mb-3">
-              <h5 className="text-accent mb-0">Raddazle</h5>
-              {/* Close button visible on small screens */}
+            <div className="px-3 mb-4">
+              <h5 className="text-accent mb-0 fw-bold">
+                <i className="fas fa-gem me-2"></i>Raddazle
+              </h5>
+            </div>
+            <ul className="nav flex-column">
+              <NavItem to="/admin/dashboard" icon="fas fa-home" label="Dashboard" />
+              <NavItem to="/admin/users" icon="fas fa-users" label="Users" />
+              <NavItem to="/admin/categories" icon="fas fa-tags" label="Categories" />
+              <NavItem to="/admin/products" icon="fas fa-box" label="Products" />
+              <NavItem to="/admin/orders" icon="fas fa-shopping-cart" label="Orders" />
+              <NavItem to="/admin/payments" icon="fas fa-receipt" label="Payments" />
+              <NavItem to="/admin/webhook-events" icon="fas fa-plug" label="Webhook Events" />
+            </ul>
+          </div>
+        </nav>
+
+        {/* Mobile Sidebar (shown when sidebarOpen) */}
+        <nav className={`sidebar d-md-none`}>
+          <div className="pt-3">
+            <div className="px-3 d-flex justify-content-between align-items-center mb-4">
+              <h5 className="text-accent mb-0 fw-bold">
+                <i className="fas fa-gem me-2"></i>Raddazle
+              </h5>
               <button 
-                className="btn btn-sm btn-outline-secondary d-md-none sidebar-close-btn"
+                className="btn btn-sm btn-outline-secondary sidebar-close-btn"
                 onClick={() => setSidebarOpen(false)} 
                 aria-label="Close sidebar"
-                style={{ minWidth: '44px', minHeight: '44px' }}
               >
                 <i className="fas fa-times"></i>
               </button>
@@ -63,11 +83,9 @@ const AdminLayout = ({ title, children }) => {
               <NavItem to="/admin/payments" icon="fas fa-receipt" label="Payments" />
               <NavItem to="/admin/webhook-events" icon="fas fa-plug" label="Webhook Events" />
             </ul>
-            {/* Mobile only - Back to store link */}
-            <div className="px-3 mt-4 d-md-none">
+            <div className="px-3 mt-4">
               <Link to="/" className="btn btn-outline-secondary w-100">
-                <i className="fas fa-store me-2"></i>
-                Back to Store
+                <i className="fas fa-store me-2"></i>Back to Store
               </Link>
             </div>
           </div>
