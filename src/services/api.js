@@ -21,30 +21,20 @@ export const getImageUrl = (imagePath) => {
     return PLACEHOLDER_IMAGE;
   }
   
-  // If it's a Cloudinary URL (contains cloudinary.com or res.cloudinary), use as-is
-  if (imagePath.includes('cloudinary.com') || imagePath.includes('res.cloudinary')) {
-    return imagePath;
-  }
-  
-  // If it's already a full URL but points to vercel uploads (which are ephemeral), use placeholder
-  if (imagePath.includes('vercel.app/uploads') || imagePath.includes('/tmp/uploads')) {
-    // Vercel ephemeral storage - these images don't persist
-    return PLACEHOLDER_IMAGE;
-  }
-  
-  // If it's any other full URL (http/https), return as-is
+  // If it's already a full URL (http/https), return as-is
+  // This handles Cloudinary URLs, external image URLs, and any other valid URL
   if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
     return imagePath;
   }
   
-  // If it's a relative path like /uploads/..., it's also ephemeral on Vercel
+  // If it's a relative path like /uploads/..., prepend the API base URL
   if (imagePath.startsWith('/uploads')) {
-    // For local dev, try to prepend API base URL
-    // For production on Vercel, these won't work - return placeholder
-    if (apiBaseUrl && !apiBaseUrl.includes('vercel.app')) {
+    // If we have an API base URL, construct the full URL
+    if (apiBaseUrl) {
       return `${apiBaseUrl}${imagePath}`;
     }
-    return PLACEHOLDER_IMAGE;
+    // Fallback: return as relative path (works if same origin)
+    return imagePath;
   }
   
   // Otherwise return as-is (might be a local public path like /img/...)

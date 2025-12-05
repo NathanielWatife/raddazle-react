@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import { categoryService, uploadService } from '../../services';
+import { getImageUrl } from '../../services/api';
 import { useToast } from '../../context/ToastContext';
 import { useConfirm } from '../../context/ConfirmContext';
 
@@ -162,7 +163,7 @@ const AdminCategories = () => {
                 <tr key={c._id}>
                   <td>
                     <div className="d-flex align-items-center gap-2">
-                      {c.image && <img src={c.image} alt="" style={{ width: 32, height: 24, objectFit: 'cover', borderRadius: 3 }} />}
+                      {c.image && <img src={getImageUrl(c.image)} alt="" style={{ width: 32, height: 24, objectFit: 'cover', borderRadius: 3 }} />}
                       <div>
                         <div className="fw-semibold">{c.name}</div>
                         <small className="text-muted d-block col-optional">{c.description}</small>
