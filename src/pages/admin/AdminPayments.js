@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import { paymentService } from '../../services';
 import { useToast } from '../../context/ToastContext';
@@ -10,23 +10,19 @@ const AdminPayments = () => {
   const toast = useToast();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
-    const confirm = useConfirm();
-  const [error, setError] = useState('');
+  const confirm = useConfirm();
   const [page, setPage] = useState(1);
   const [pages, setPages] = useState(1);
   const [count, setCount] = useState(0);
   const [status, setStatus] = useState('');
   const [method, setMethod] = useState('');
 
-  const fetchData = async (opts = {}) => {
+  const fetchData = useCallback(async (opts = {}) => {
     setLoading(true);
-    setError('');
     try {
       const params = { page, pageSize: PAGE_SIZE };
       if (opts.page) params.page = opts.page;
-      const res = await fetch(`/api/payments?${new URLSearchParams(params)}`, { credentials: 'include' });
-      const data = await res.json();
-      if (!res.ok || data.success === false) throw new Error(data.message || 'Failed to load payments');
+      const data = await paymentService.getAll(params);
       let list = data.payments || [];
       if (status) list = list.filter(p => p.status === status);
       if (method) list = list.filter(p => p.paymentMethod === method);
@@ -35,14 +31,13 @@ const AdminPayments = () => {
       setPages(data.pages || 1);
       setCount(data.count || list.length);
     } catch (e) {
-      setError('');
       toast.error(e.message || 'Failed to load payments');
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, status, method, toast]);
 
-  useEffect(() => { fetchData(); }, []);
+  useEffect(() => { fetchData(); }, [fetchData]);
 
   const updateStatus = async (paymentId, newStatus) => {
     const ok = await confirm.confirm({
@@ -54,14 +49,7 @@ const AdminPayments = () => {
     });
     if (!ok) return;
     try {
-      const res = await fetch(`/api/payments/${paymentId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ status: newStatus })
-      });
-      const data = await res.json();
-      if (!res.ok || data.success === false) throw new Error(data.message || 'Failed');
+      await paymentService.updateStatus(paymentId, newStatus);
       await fetchData();
     } catch (e) {
       toast.error(e.message || 'Failed to update payment');
@@ -78,9 +66,7 @@ const AdminPayments = () => {
     });
     if (!ok) return;
     try {
-      const res = await fetch(`/api/payments/${paymentId}/refund`, { method: 'POST', credentials: 'include' });
-      const data = await res.json();
-      if (!res.ok || data.success === false) throw new Error(data.message || 'Refund failed');
+      await paymentService.refund(paymentId);
       await fetchData();
     } catch (e) { toast.error(e.message || 'Refund failed'); }
   };

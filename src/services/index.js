@@ -127,6 +127,22 @@ export const orderService = {
 };
 
 export const paymentService = {
+  getAll: async (params = {}) => {
+    const response = await api.get('/payments', { params });
+    return response.data;
+  },
+  getById: async (id) => {
+    const response = await api.get(`/payments/${id}`);
+    return response.data;
+  },
+  updateStatus: async (id, status) => {
+    const response = await api.put(`/payments/${id}`, { status });
+    return response.data;
+  },
+  refund: async (id) => {
+    const response = await api.post(`/payments/${id}/refund`);
+    return response.data;
+  },
   initPaystack: async (orderId) => {
     const response = await api.post('/payments/paystack/init', { orderId });
     return response.data;
