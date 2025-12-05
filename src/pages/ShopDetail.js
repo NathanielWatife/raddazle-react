@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import Layout from '../components/Layout';
 import AnimatedSection from '../components/AnimatedSection';
 import { formatCurrency } from '../utils/currency';
+import { getImageUrl } from '../services/api';
 import { productService } from '../services';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
@@ -121,9 +122,13 @@ const ShopDetail = () => {
                 <div className="col-lg-6">
                   <div className="border rounded">
                     <img 
-                      src={product.image || '/img/single-item.jpg'} 
+                      src={getImageUrl(product.image) || '/img/product-placeholder.jpg'} 
                       className="img-fluid rounded" 
                       alt={product.name}
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = '/img/product-placeholder.jpg';
+                      }}
                     />
                   </div>
                 </div>
@@ -293,10 +298,14 @@ const ShopDetail = () => {
               <div className="col-sm-6 col-lg-3" key={item._id}>
                 <div className="card h-100 border-0 shadow-sm">
                   <img
-                    src={item.image || '/img/fruite-item-1.jpg'}
+                    src={getImageUrl(item.image) || '/img/product-placeholder.jpg'}
                     className="card-img-top"
                     alt={item.name}
                     style={{ height: 180, objectFit: 'cover' }}
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = '/img/product-placeholder.jpg';
+                    }}
                   />
                   <div className="card-body d-flex flex-column">
                     <h6 className="fw-semibold">{item.name}</h6>

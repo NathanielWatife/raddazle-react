@@ -4,6 +4,7 @@ import Layout from '../components/Layout';
 import AnimatedSection from '../components/AnimatedSection';
 import { useCart } from '../context/CartContext';
 import { formatCurrency } from '../utils/currency';
+import { getImageUrl } from '../services/api';
 import { orderService, paymentService } from '../services';
 import { useToast } from '../context/ToastContext';
 
@@ -316,10 +317,14 @@ const Checkout = () => {
                           <th scope="row">
                             <div className="d-flex align-items-center mt-2">
                               <img
-                                src={item.product.image || '/img/vegetable-item-2.jpg'}
+                                src={getImageUrl(item.product.image) || '/img/product-placeholder.jpg'}
                                 className="img-fluid rounded-circle"
-                                style={{ width: '90px', height: '90px' }}
-                                alt=""
+                                style={{ width: '90px', height: '90px', objectFit: 'cover' }}
+                                alt={item.product.name}
+                                onError={(e) => {
+                                  e.target.onerror = null;
+                                  e.target.src = '/img/product-placeholder.jpg';
+                                }}
                               />
                             </div>
                           </th>

@@ -2,10 +2,32 @@ import axios from 'axios';
 
 const raw = process.env.REACT_APP_API_URL;
 let baseURL = '/api';
+let apiBaseUrl = ''; // The base URL without /api for static files
+
 if (raw && typeof raw === 'string') {
   const trimmed = raw.replace(/\/$/, '');
   baseURL = /\/(api)(\/|$)/.test(trimmed) ? trimmed : `${trimmed}/api`;
+  // Extract base URL without /api for static files like /uploads
+  apiBaseUrl = trimmed.replace(/\/api$/, '');
 }
+
+// Helper to get the correct image URL
+export const getImageUrl = (imagePath) => {
+  if (!imagePath) return null;
+  
+  // If it's already a full URL (Cloudinary, etc.), return as-is
+  if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+    return imagePath;
+  }
+  
+  // If it's a relative path like /uploads/..., prepend the API base URL
+  if (imagePath.startsWith('/uploads')) {
+    return apiBaseUrl ? `${apiBaseUrl}${imagePath}` : imagePath;
+  }
+  
+  // Otherwise return as-is (might be a local public path)
+  return imagePath;
+};
 
 const api = axios.create({
   baseURL,

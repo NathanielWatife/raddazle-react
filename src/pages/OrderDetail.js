@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { orderService } from '../services';
 import { formatCurrency } from '../utils/currency';
+import { getImageUrl } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { useConfirm } from '../context/ConfirmContext';
@@ -138,10 +139,14 @@ const OrderDetail = () => {
                   <div className="d-flex align-items-center justify-content-between border-bottom py-3 order-item" key={item.product}>
                     <div className="d-flex align-items-center">
                       <img
-                        src={item.image || '/img/vegetable-item-1.jpg'}
+                        src={getImageUrl(item.image) || '/img/product-placeholder.jpg'}
                         alt={item.name}
                         className="rounded"
                         style={{ width: 64, height: 64, objectFit: 'cover' }}
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = '/img/product-placeholder.jpg';
+                        }}
                       />
                       <div className="ms-3">
                         <p className="mb-1 fw-semibold line-clamp-1" style={{ maxWidth: 200 }}>{item.name}</p>

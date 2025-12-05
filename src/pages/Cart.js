@@ -4,6 +4,7 @@ import Layout from '../components/Layout';
 import AnimatedSection from '../components/AnimatedSection';
 import { useCart } from '../context/CartContext';
 import { formatCurrency } from '../utils/currency';
+import { getImageUrl } from '../services/api';
 
 const Cart = () => {
   const { cart, updateCartItem, removeFromCart, getCartTotal } = useCart();
@@ -80,10 +81,14 @@ const Cart = () => {
                     <td data-label="Product">
                       <div className="d-flex align-items-center justify-content-center">
                         <img 
-                          src={item.product.image || '/img/vegetable-item-3.png'} 
+                          src={getImageUrl(item.product.image) || '/img/product-placeholder.jpg'} 
                           className="img-fluid rounded-circle" 
-                          style={{ width: '80px', height: '80px' }} 
+                          style={{ width: '80px', height: '80px', objectFit: 'cover' }} 
                           alt={item.product.name}
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = '/img/product-placeholder.jpg';
+                          }}
                         />
                       </div>
                     </td>
