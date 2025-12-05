@@ -60,7 +60,7 @@ const OrderDetail = () => {
 
   const handleCancel = async () => {
     if (!order || order.status === 'cancelled' || order.isDelivered) return;
-    const ok = await confirm({ title: 'Cancel this order?', message: 'This action cannot be undone.', variant: 'danger', okText: 'Cancel order' });
+    const ok = await confirm.confirm({ title: 'Cancel this order?', message: 'This action cannot be undone.', variant: 'danger', okText: 'Cancel order' });
     if (!ok) return;
     setProcessing(true);
     try {

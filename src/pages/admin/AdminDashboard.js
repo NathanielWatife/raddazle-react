@@ -127,7 +127,7 @@ const AdminDashboard = () => {
   };
 
   const deleteCategory = async (cat) => {
-    const ok = await confirm({ title: 'Delete category?', message: `Delete "${cat.name}" permanently?`, variant: 'danger', okText: 'Delete' });
+    const ok = await confirm.confirm({ title: 'Delete category?', message: `Delete "${cat.name}" permanently?`, variant: 'danger', okText: 'Delete' });
     if (!ok) return;
     try {
       await categoryService.remove(cat._id);

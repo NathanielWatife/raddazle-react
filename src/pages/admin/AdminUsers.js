@@ -75,7 +75,7 @@ const AdminUsers = () => {
       return;
     }
 
-    const ok = await confirm({ title: `${action[0].toUpperCase()+action.slice(1)} users?`, message: `Apply ${action} to ${selectedUsers.length} user(s)?`, variant: action === 'delete' ? 'danger' : 'warning', okText: action[0].toUpperCase()+action.slice(1) });
+    const ok = await confirm.confirm({ title: `${action[0].toUpperCase()+action.slice(1)} users?`, message: `Apply ${action} to ${selectedUsers.length} user(s)?`, variant: action === 'delete' ? 'danger' : 'warning', okText: action[0].toUpperCase()+action.slice(1) });
     if (!ok) return;
 
     try {
@@ -92,7 +92,7 @@ const AdminUsers = () => {
   const handleRoleChange = async (u, newRole) => {
     if (!isSuperAdmin) return;
     if (u.role === 'super-admin' && user._id !== u._id) {
-      const ok = await confirm({ title: 'Modify super-admin?', message: 'Are you sure you want to change another super-admin\'s role?', variant: 'danger', okText: 'Proceed' });
+      const ok = await confirm.confirm({ title: 'Modify super-admin?', message: 'Are you sure you want to change another super-admin\'s role?', variant: 'danger', okText: 'Proceed' });
       if (!ok) return;
     }
     try {

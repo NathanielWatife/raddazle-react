@@ -81,17 +81,13 @@ const AdminProducts = () => {
   };
 
   const onDelete = async (id) => {
-    const ok = await confirm({ title: 'Delete product?', message: 'This action cannot be undone.', variant: 'danger', okText: 'Delete' });
+    const ok = await confirm.confirm({ title: 'Delete product?', message: 'This action cannot be undone.', variant: 'danger', okText: 'Delete' });
     if (!ok) return;
     try {
-      console.log('Deleting product:', id);
-      const response = await productService.delete(id);
-      console.log('Delete response:', response);
+      await productService.delete(id);
       await fetchProducts(page);
       toast.success('Product deleted.');
     } catch (err) {
-      console.error('Delete error:', err);
-      console.error('Error response:', err.response);
       toast.error(err.response?.data?.message || 'Failed to delete product');
     }
   };
@@ -144,7 +140,7 @@ const AdminProducts = () => {
   const onBulkAdjust = async () => {
     const delta = parseInt(bulkDelta, 10);
     if (!delta || selected.length === 0) return;
-    const ok = await confirm({ title: 'Adjust inventory?', message: `Adjust stock by ${delta} for ${selected.length} product(s)?`, variant: 'warning', okText: 'Apply' });
+    const ok = await confirm.confirm({ title: 'Adjust inventory?', message: `Adjust stock by ${delta} for ${selected.length} product(s)?`, variant: 'warning', okText: 'Apply' });
     if (!ok) return;
     for (const id of selected) {
       await productService.adjustInventory(id, { delta, reason: 'manual-adjustment', note: 'Bulk update' });

@@ -103,7 +103,7 @@ const Profile = () => {
   };
 
   const handleAddressDelete = async (type, addressId) => {
-    const ok = await confirm({
+    const ok = await confirm.confirm({
       title: 'Remove address?',
       message: 'This action cannot be undone.',
       variant: 'danger',
