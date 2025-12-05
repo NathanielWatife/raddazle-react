@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import { categoryService, uploadService } from '../../services';
 import { getImageUrl } from '../../services/api';
@@ -11,7 +11,8 @@ const AdminCategories = () => {
   const toast = useToast();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
-    const confirm = useConfirm();
+  const confirm = useConfirm();
+  // eslint-disable-next-line no-unused-vars
   const [error, setError] = useState('');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -23,7 +24,7 @@ const AdminCategories = () => {
   const [form, setForm] = useState({ name: '', description: '', image: '', isActive: true });
   const [uploading, setUploading] = useState(false);
 
-  const fetchData = async (opts = {}) => {
+  const fetchData = useCallback(async (opts = {}) => {
     setLoading(true);
     setError('');
     try {
@@ -42,9 +43,9 @@ const AdminCategories = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, search, toast]);
 
-  useEffect(() => { fetchData(); }, []);
+  useEffect(() => { fetchData(); }, [fetchData]);
 
   const openCreate = () => {
     setEditing(null);
