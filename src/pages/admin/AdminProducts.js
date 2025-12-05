@@ -153,18 +153,28 @@ const AdminProducts = () => {
 
   return (
     <AdminLayout title="Products">
-      <div className="d-flex justify-content-between align-items-center mb-3">
-        <form className="d-flex gap-2" onSubmit={onSearch}>
-          <input className="form-control" placeholder="Search products..." value={keyword} onChange={(e)=>setKeyword(e.target.value)} />
-          <button className="btn btn-outline-secondary" type="submit">Search</button>
+      {/* Mobile-optimized header */}
+      <div className="admin-page-header">
+        <form className="admin-search-form" onSubmit={onSearch}>
+          <div className="input-group">
+            <input className="form-control" placeholder="Search products..." value={keyword} onChange={(e)=>setKeyword(e.target.value)} />
+            <button className="btn btn-outline-secondary" type="submit">
+              <i className="fas fa-search d-md-none"></i>
+              <span className="d-none d-md-inline">Search</span>
+            </button>
+          </div>
         </form>
-        <div className="d-flex gap-2">
-          <div className="input-group input-group-sm" style={{ width: 220 }}>
+        <div className="admin-header-actions">
+          <div className="bulk-adjust-group d-none d-lg-flex">
             <span className="input-group-text">Bulk Δ</span>
-            <input type="number" className="form-control" value={bulkDelta} onChange={(e)=>setBulkDelta(e.target.value)} />
+            <input type="number" className="form-control" value={bulkDelta} onChange={(e)=>setBulkDelta(e.target.value)} style={{width: '80px'}} />
             <button className="btn btn-outline-primary" type="button" onClick={onBulkAdjust}>Apply</button>
           </div>
-          <button className="btn btn-primary" onClick={onCreate}><i className="fas fa-plus me-1"></i>Add Product</button>
+          <button className="btn btn-primary" onClick={onCreate}>
+            <i className="fas fa-plus me-1"></i>
+            <span className="d-none d-sm-inline">Add Product</span>
+            <span className="d-sm-none">Add</span>
+          </button>
         </div>
       </div>
 

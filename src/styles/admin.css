@@ -917,3 +917,445 @@
   }
 }
 
+/* ================= Admin Page Header (Mobile-First) ================ */
+.admin-page-header {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.admin-search-form {
+  width: 100%;
+}
+
+.admin-search-form .input-group {
+  width: 100%;
+}
+
+.admin-header-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.bulk-adjust-group {
+  display: flex;
+  align-items: center;
+}
+
+.bulk-adjust-group .input-group-text {
+  background: #1a1f2a;
+  border-color: #2a3340;
+  color: #c7c9d1;
+  font-size: 0.85rem;
+}
+
+@media (min-width: 768px) {
+  .admin-page-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .admin-search-form {
+    width: auto;
+    min-width: 280px;
+  }
+  
+  .admin-header-actions {
+    flex-wrap: nowrap;
+  }
+}
+
+/* ================= Mobile Cards Layout ================ */
+.admin-card-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+@media (min-width: 576px) {
+  .admin-card-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 992px) {
+  .admin-card-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* ================= Responsive Tables Alternative - Card View ================ */
+@media (max-width: 767.98px) {
+  /* Make tables more usable on mobile */
+  .admin-dark .table-responsive {
+    margin: 0 -10px;
+    padding: 0 10px;
+    border: none;
+  }
+  
+  .admin-dark .table {
+    font-size: 0.85rem;
+  }
+  
+  .admin-dark .table thead th {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 10px 6px !important;
+    white-space: nowrap;
+  }
+  
+  .admin-dark .table tbody td {
+    padding: 12px 6px !important;
+    vertical-align: middle;
+  }
+  
+  /* Checkbox column */
+  .admin-dark .table th:first-child,
+  .admin-dark .table td:first-child {
+    width: 36px;
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+  }
+  
+  /* Actions column compact */
+  .admin-dark .table th:last-child,
+  .admin-dark .table td:last-child {
+    width: auto;
+    text-align: right;
+  }
+  
+  /* Product name - allow wrap */
+  .admin-dark .table td:nth-child(2) {
+    max-width: 120px;
+    word-break: break-word;
+  }
+}
+
+/* ================= Mobile Form Improvements ================ */
+@media (max-width: 767.98px) {
+  .admin-dark .card {
+    margin-left: -10px;
+    margin-right: -10px;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
+  
+  .admin-dark .card-body {
+    padding: 16px 12px;
+  }
+  
+  .admin-dark form .row.g-3 {
+    --bs-gutter-y: 1rem;
+  }
+  
+  /* Full width form columns on mobile */
+  .admin-dark form .col-md-3,
+  .admin-dark form .col-md-4,
+  .admin-dark form .col-md-6 {
+    width: 100%;
+  }
+  
+  /* Two columns for small inputs */
+  .admin-dark form .col-md-3 {
+    width: 50%;
+    float: left;
+    padding-right: 6px;
+  }
+  
+  .admin-dark form .col-md-3:nth-of-type(even) {
+    padding-right: 0;
+    padding-left: 6px;
+  }
+  
+  /* Form buttons - full width and stacked */
+  .admin-dark form .col-12.d-flex.gap-2 {
+    flex-direction: column;
+  }
+  
+  .admin-dark form .col-12.d-flex.gap-2 .btn {
+    width: 100%;
+  }
+}
+
+/* ================= Mobile Stats Cards ================ */
+@media (max-width: 575.98px) {
+  .admin-dark .row.g-3 > [class*="col-"] {
+    padding-left: 6px;
+    padding-right: 6px;
+  }
+  
+  .admin-dark .card.h-100 {
+    height: auto !important;
+  }
+  
+  .admin-dark .card.bg-primary .card-body,
+  .admin-dark .card.bg-success .card-body,
+  .admin-dark .card.bg-warning .card-body,
+  .admin-dark .card.bg-info .card-body {
+    padding: 14px !important;
+  }
+  
+  .admin-dark .card-body .d-flex.justify-content-between {
+    flex-direction: row;
+  }
+  
+  .admin-dark .card-body h2.fw-bold {
+    font-size: 1.4rem !important;
+    margin-bottom: 2px !important;
+  }
+  
+  .admin-dark .card-body h6.card-title {
+    font-size: 0.7rem !important;
+    margin-bottom: 4px !important;
+  }
+  
+  .admin-dark .card-body .fa-2x {
+    font-size: 1.3rem !important;
+  }
+  
+  .admin-dark .card-body small.opacity-75 {
+    font-size: 0.7rem !important;
+  }
+}
+
+/* ================= Two-column stats on small phones ================ */
+@media (max-width: 575.98px) {
+  .admin-dark .row.g-3.mb-4 > .col-12.col-sm-6 {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+}
+
+/* ================= Mobile Section Headers ================ */
+@media (max-width: 767.98px) {
+  .admin-dark .d-flex.justify-content-between.align-items-center.mb-3 {
+    flex-direction: column;
+    align-items: stretch !important;
+    gap: 10px;
+  }
+  
+  .admin-dark .d-flex.justify-content-between.align-items-center.mb-3 h2 {
+    margin-bottom: 0;
+    font-size: 1.1rem;
+  }
+  
+  .admin-dark .d-flex.justify-content-between.align-items-center.mb-3 .btn {
+    align-self: flex-start;
+  }
+}
+
+/* Row direction on wider mobile */
+@media (min-width: 480px) and (max-width: 767.98px) {
+  .admin-dark .d-flex.justify-content-between.align-items-center.mb-3 {
+    flex-direction: row;
+    align-items: center !important;
+  }
+}
+
+/* ================= Mobile Action Buttons in Tables ================ */
+@media (max-width: 767.98px) {
+  .admin-dark .dropdown-toggle {
+    padding: 8px 12px;
+    font-size: 0.8rem;
+  }
+  
+  .admin-dark .dropdown-menu {
+    min-width: 160px;
+    padding: 8px 0;
+  }
+  
+  .admin-dark .dropdown-item {
+    padding: 10px 16px;
+    font-size: 0.9rem;
+  }
+  
+  .admin-dark .dropdown-item i {
+    width: 20px;
+  }
+}
+
+/* ================= Improved Mobile Layout ================ */
+@media (max-width: 991.98px) {
+  .admin-dark main {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+  
+  /* Top bar adjustments */
+  .admin-dark .d-flex.justify-content-between.flex-wrap {
+    gap: 12px;
+  }
+  
+  .admin-dark .d-flex.justify-content-between.flex-wrap h1.h4 {
+    font-size: 1.25rem;
+    margin-bottom: 0;
+  }
+  
+  .admin-dark .d-flex.justify-content-between.flex-wrap small.text-muted {
+    font-size: 0.75rem;
+  }
+}
+
+/* Extra small screens */
+@media (max-width: 375px) {
+  .admin-dark main {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+  }
+  
+  .admin-dark .btn {
+    padding: 8px 10px;
+    font-size: 0.8rem;
+  }
+  
+  .admin-dark .btn-sm {
+    padding: 6px 8px;
+    font-size: 0.75rem;
+  }
+}
+
+/* ================= Mobile Breadcrumbs ================ */
+@media (max-width: 575.98px) {
+  .admin-dark nav[aria-label="breadcrumb"] {
+    margin-bottom: 12px !important;
+  }
+  
+  .admin-dark .breadcrumb {
+    font-size: 0.75rem;
+    margin-bottom: 0;
+    padding: 0;
+  }
+  
+  .admin-dark .breadcrumb-item {
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+/* ================= Fix Sidebar Close Button ================ */
+@media (max-width: 991.98px) {
+  .sidebar .d-flex.justify-content-between .btn {
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+/* ================= Admin Topbar ================ */
+.admin-topbar {
+  position: sticky;
+  top: 0;
+  background: #0f1115;
+  z-index: 100;
+  padding-top: 12px !important;
+  padding-bottom: 12px !important;
+}
+
+.sidebar-toggle-btn {
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.admin-topbar-actions {
+  flex-shrink: 0;
+}
+
+@media (max-width: 767.98px) {
+  .admin-topbar {
+    margin-left: -12px;
+    margin-right: -12px;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+  
+  .admin-topbar h1.h4 {
+    font-size: 1.1rem;
+  }
+}
+
+/* ================= Admin Main Content ================ */
+.admin-main {
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+@media (min-width: 768px) {
+  .admin-main {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+}
+
+/* ================= Better Input Group Styling ================ */
+.admin-dark .input-group {
+  flex-wrap: nowrap;
+}
+
+.admin-dark .input-group .form-control {
+  border-radius: 6px 0 0 6px;
+}
+
+.admin-dark .input-group .btn {
+  border-radius: 0 6px 6px 0;
+}
+
+.admin-dark .input-group-text {
+  background: #1a1f2a;
+  border-color: #2a3340;
+  color: #9aa0aa;
+}
+
+/* ================= Improved Form Controls ================ */
+.admin-dark .form-control:focus,
+.admin-dark .form-select:focus {
+  border-color: #7aa2f7;
+  box-shadow: 0 0 0 2px rgba(122, 162, 247, 0.2);
+}
+
+.admin-dark .form-check-input {
+  width: 20px;
+  height: 20px;
+  margin-top: 0;
+}
+
+.admin-dark .form-check-input:checked {
+  background-color: #7aa2f7;
+  border-color: #7aa2f7;
+}
+
+/* ================= Better Button Styling ================ */
+.admin-dark .btn-primary {
+  background-color: #7aa2f7;
+  border-color: #7aa2f7;
+  color: #0f1115;
+  font-weight: 500;
+}
+
+.admin-dark .btn-primary:hover {
+  background-color: #5a8af0;
+  border-color: #5a8af0;
+}
+
+.admin-dark .btn-outline-primary {
+  color: #7aa2f7;
+  border-color: #7aa2f7;
+}
+
+.admin-dark .btn-outline-primary:hover {
+  background-color: #7aa2f7;
+  color: #0f1115;
+}
+

@@ -90,24 +90,27 @@ const AdminPayments = () => {
 
   return (
     <AdminLayout title="Payments">
-      <div className="d-flex flex-column flex-md-row gap-2 align-items-md-center justify-content-between mb-3">
-        <div className="d-flex gap-2">
-          <select className="form-select" value={status} onChange={(e)=>setStatus(e.target.value)}>
+      <div className="admin-page-header">
+        <div className="d-flex gap-2 flex-wrap flex-grow-1">
+          <select className="form-select" style={{maxWidth: '180px'}} value={status} onChange={(e)=>setStatus(e.target.value)}>
             <option value="">All Statuses</option>
             <option value="pending">Pending</option>
             <option value="completed">Completed</option>
             <option value="failed">Failed</option>
             <option value="refunded">Refunded</option>
           </select>
-          <select className="form-select" value={method} onChange={(e)=>setMethod(e.target.value)}>
+          <select className="form-select" style={{maxWidth: '180px'}} value={method} onChange={(e)=>setMethod(e.target.value)}>
             <option value="">All Methods</option>
-            <option value="card">Card (Gateways)</option>
-            <option value="bank-transfer">Bank Transfer</option>
+            <option value="card">Card</option>
+            <option value="bank-transfer">Bank</option>
             <option value="ussd">USSD</option>
             <option value="crypto">Crypto</option>
-            <option value="cod">Cash on Delivery</option>
+            <option value="cod">COD</option>
           </select>
-          <button className="btn btn-outline-secondary" onClick={()=>fetchData()}>Apply</button>
+          <button className="btn btn-outline-secondary" onClick={()=>fetchData()}>
+            <i className="fas fa-filter d-sm-none"></i>
+            <span className="d-none d-sm-inline">Apply</span>
+          </button>
         </div>
       </div>
 

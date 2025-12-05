@@ -162,59 +162,59 @@ const AdminDashboard = () => {
   return (
     <AdminLayout title="Dashboard">
       {/* Stats Cards */}
-      <div className="row g-3 mb-4">
-            <div className="col-12 col-sm-6 col-lg-3">
+      <div className="row g-2 g-sm-3 mb-4">
+            <div className="col-6 col-lg-3">
               <div className="card bg-primary text-white h-100 shadow-sm">
-                <div className="card-body">
+                <div className="card-body p-3">
                   <div className="d-flex justify-content-between align-items-start">
-                    <div>
-                      <h6 className="card-title text-uppercase small mb-2 opacity-90">Total Users</h6>
-                      <h2 className="mb-1 fw-bold">{stats?.users?.totalUsers || 0}</h2>
-                      <small className="opacity-75">Active: {stats?.users?.activeUsers || 0}</small>
+                    <div className="flex-grow-1">
+                      <h6 className="card-title text-uppercase small mb-1 opacity-90">Total Users</h6>
+                      <h2 className="mb-0 fw-bold">{stats?.users?.totalUsers || 0}</h2>
+                      <small className="opacity-75 d-none d-sm-inline">Active: {stats?.users?.activeUsers || 0}</small>
                     </div>
-                    <i className="fas fa-users fa-2x opacity-50"></i>
+                    <i className="fas fa-users fa-lg opacity-50 d-none d-sm-block"></i>
                   </div>
                 </div>
               </div>
             </div>
-            <div className="col-12 col-sm-6 col-lg-3">
+            <div className="col-6 col-lg-3">
               <div className="card bg-success text-white h-100 shadow-sm">
-                <div className="card-body">
+                <div className="card-body p-3">
                   <div className="d-flex justify-content-between align-items-start">
-                    <div>
-                      <h6 className="card-title text-uppercase small mb-2 opacity-90">Total Products</h6>
-                      <h2 className="mb-1 fw-bold">{stats?.products?.totalProducts || 0}</h2>
-                      <small className="opacity-75">In Stock</small>
+                    <div className="flex-grow-1">
+                      <h6 className="card-title text-uppercase small mb-1 opacity-90">Products</h6>
+                      <h2 className="mb-0 fw-bold">{stats?.products?.totalProducts || 0}</h2>
+                      <small className="opacity-75 d-none d-sm-inline">In Stock</small>
                     </div>
-                    <i className="fas fa-box fa-2x opacity-50"></i>
+                    <i className="fas fa-box fa-lg opacity-50 d-none d-sm-block"></i>
                   </div>
                 </div>
               </div>
             </div>
-            <div className="col-12 col-sm-6 col-lg-3">
+            <div className="col-6 col-lg-3">
               <div className="card bg-warning text-white h-100 shadow-sm">
-                <div className="card-body">
+                <div className="card-body p-3">
                   <div className="d-flex justify-content-between align-items-start">
-                    <div>
-                      <h6 className="card-title text-uppercase small mb-2 opacity-90">Total Orders</h6>
-                      <h2 className="mb-1 fw-bold">{stats?.orders?.totalOrders || 0}</h2>
-                      <small className="opacity-75">All time</small>
+                    <div className="flex-grow-1">
+                      <h6 className="card-title text-uppercase small mb-1 opacity-90">Orders</h6>
+                      <h2 className="mb-0 fw-bold">{stats?.orders?.totalOrders || 0}</h2>
+                      <small className="opacity-75 d-none d-sm-inline">All time</small>
                     </div>
-                    <i className="fas fa-shopping-cart fa-2x opacity-50"></i>
+                    <i className="fas fa-shopping-cart fa-lg opacity-50 d-none d-sm-block"></i>
                   </div>
                 </div>
               </div>
             </div>
-            <div className="col-12 col-sm-6 col-lg-3">
+            <div className="col-6 col-lg-3">
               <div className="card bg-info text-white h-100 shadow-sm">
-                <div className="card-body">
+                <div className="card-body p-3">
                   <div className="d-flex justify-content-between align-items-start">
-                    <div>
-                      <h6 className="card-title text-uppercase small mb-2 opacity-90">Revenue</h6>
-                      <h2 className="mb-1 fw-bold fs-4">{formatCurrency(stats?.orders?.totalRevenue || 0)}</h2>
-                      <small className="opacity-75">Total</small>
+                    <div className="flex-grow-1">
+                      <h6 className="card-title text-uppercase small mb-1 opacity-90">Revenue</h6>
+                      <h2 className="mb-0 fw-bold" style={{fontSize: 'clamp(1rem, 4vw, 1.5rem)'}}>{formatCurrency(stats?.orders?.totalRevenue || 0)}</h2>
+                      <small className="opacity-75 d-none d-sm-inline">Total</small>
                     </div>
-                    <i className="fas fa-dollar-sign fa-2x opacity-50"></i>
+                    <i className="fas fa-dollar-sign fa-lg opacity-50 d-none d-sm-block"></i>
                   </div>
                 </div>
               </div>

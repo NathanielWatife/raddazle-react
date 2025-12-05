@@ -125,22 +125,22 @@ const AdminUsers = () => {
 
   return (
     <AdminLayout title="Users Management">
-      <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-1 pb-2 mb-3 border-bottom">
-        <div />
-        <div className="btn-toolbar mb-2 mb-md-0">
-          <button 
-            type="button" 
-            className="btn btn-sm btn-outline-secondary"
-            onClick={handleExport}
-          >
-            <i className="fas fa-download me-1"></i>Export CSV
-          </button>
-        </div>
+      <div className="admin-page-header mb-3">
+        <div></div>
+        <button 
+          type="button" 
+          className="btn btn-outline-secondary"
+          onClick={handleExport}
+        >
+          <i className="fas fa-download me-1"></i>
+          <span className="d-none d-sm-inline">Export CSV</span>
+          <span className="d-sm-none">Export</span>
+        </button>
       </div>
 
           {/* Filters */}
-          <div className="row mb-3">
-            <div className="col-md-4">
+          <div className="row g-2 mb-3">
+            <div className="col-12 col-md-4">
               <input 
                 type="search" 
                 className="form-control" 
@@ -149,7 +149,7 @@ const AdminUsers = () => {
                 onChange={(e) => handleFilterChange('search', e.target.value)}
               />
             </div>
-            <div className="col-md-3">
+            <div className="col-6 col-md-3">
               <select 
                 className="form-select"
                 value={filters.role}
@@ -160,7 +160,7 @@ const AdminUsers = () => {
                 <option value="admin">Admin</option>
               </select>
             </div>
-            <div className="col-md-3">
+            <div className="col-6 col-md-3">
               <select 
                 className="form-select"
                 value={filters.status}

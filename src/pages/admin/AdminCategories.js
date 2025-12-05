@@ -125,12 +125,18 @@ const AdminCategories = () => {
 
   return (
     <AdminLayout title="Categories">
-      <div className="d-flex flex-column flex-md-row gap-2 align-items-md-center justify-content-between mb-3">
-        <form className="d-flex gap-2" onSubmit={onSearchSubmit}>
-          <input className="form-control" placeholder="Search categories..." value={search} onChange={(e)=>setSearch(e.target.value)} />
-          <button className="btn btn-outline-secondary" type="submit"><i className="fas fa-search"></i></button>
+      <div className="admin-page-header">
+        <form className="admin-search-form" onSubmit={onSearchSubmit}>
+          <div className="input-group">
+            <input className="form-control" placeholder="Search categories..." value={search} onChange={(e)=>setSearch(e.target.value)} />
+            <button className="btn btn-outline-secondary" type="submit"><i className="fas fa-search"></i></button>
+          </div>
         </form>
-        <button className="btn btn-primary btn-sm" onClick={openCreate}><i className="fas fa-plus me-1"></i>New Category</button>
+        <button className="btn btn-primary" onClick={openCreate}>
+          <i className="fas fa-plus me-1"></i>
+          <span className="d-none d-sm-inline">New Category</span>
+          <span className="d-sm-none">Add</span>
+        </button>
       </div>
 
       {/* Errors shown via overlay toasts */}
