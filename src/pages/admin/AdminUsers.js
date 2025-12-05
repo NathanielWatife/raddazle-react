@@ -124,54 +124,51 @@ const AdminUsers = () => {
   };
 
   return (
-    <AdminLayout title="Users Management">
-      <div className="admin-page-header mb-3">
-        <div></div>
-        <button 
-          type="button" 
-          className="btn btn-outline-secondary"
-          onClick={handleExport}
-        >
-          <i className="fas fa-download me-1"></i>
-          <span className="d-none d-sm-inline">Export CSV</span>
-          <span className="d-sm-none">Export</span>
-        </button>
+    <AdminLayout title="Users">
+      {/* Filters */}
+      <div className="row g-2 mb-3">
+        <div className="col-12 col-sm-6 col-md-4">
+          <input 
+            type="search" 
+            className="form-control" 
+            placeholder="Search users..."
+            value={filters.search}
+            onChange={(e) => handleFilterChange('search', e.target.value)}
+          />
+        </div>
+        <div className="col-6 col-sm-3 col-md-2">
+          <select 
+            className="form-select"
+            value={filters.role}
+            onChange={(e) => handleFilterChange('role', e.target.value)}
+          >
+            <option value="">All Roles</option>
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+        <div className="col-6 col-sm-3 col-md-2">
+          <select 
+            className="form-select"
+            value={filters.status}
+            onChange={(e) => handleFilterChange('status', e.target.value)}
+          >
+            <option value="">All Status</option>
+            <option value="active">Active</option>
+            <option value="suspended">Suspended</option>
+          </select>
+        </div>
+        <div className="col-12 col-md-4 d-flex justify-content-end">
+          <button 
+            type="button" 
+            className="btn btn-outline-secondary"
+            onClick={handleExport}
+          >
+            <i className="fas fa-download me-1"></i>
+            <span>Export</span>
+          </button>
+        </div>
       </div>
-
-          {/* Filters */}
-          <div className="row g-2 mb-3">
-            <div className="col-12 col-md-4">
-              <input 
-                type="search" 
-                className="form-control" 
-                placeholder="Search users..."
-                value={filters.search}
-                onChange={(e) => handleFilterChange('search', e.target.value)}
-              />
-            </div>
-            <div className="col-6 col-md-3">
-              <select 
-                className="form-select"
-                value={filters.role}
-                onChange={(e) => handleFilterChange('role', e.target.value)}
-              >
-                <option value="">All Roles</option>
-                <option value="user">User</option>
-                <option value="admin">Admin</option>
-              </select>
-            </div>
-            <div className="col-6 col-md-3">
-              <select 
-                className="form-select"
-                value={filters.status}
-                onChange={(e) => handleFilterChange('status', e.target.value)}
-              >
-                <option value="">All Status</option>
-                <option value="active">Active</option>
-                <option value="suspended">Suspended</option>
-              </select>
-            </div>
-          </div>
 
           {/* Bulk Actions */}
           {selectedUsers.length > 0 && (

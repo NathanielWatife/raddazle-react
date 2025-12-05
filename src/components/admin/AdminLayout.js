@@ -37,16 +37,16 @@ const AdminLayout = ({ title, children }) => {
   const crumbs = location.pathname.split('/').filter(Boolean).slice(1); // drop leading 'admin'
 
   return (
-    <div className={`container-fluid admin-dark ${sidebarOpen ? 'admin-has-sidebar-open' : ''}`}>
-      <div className="row g-0">
+    <div className={`admin-dark ${sidebarOpen ? 'admin-has-sidebar-open' : ''}`}>
+      <div className="d-flex">
         {/* Sidebar */}
-        <nav className="col-md-3 col-lg-2 d-md-block bg-dark sidebar min-vh-100 border-end text-white">
+        <nav className="sidebar bg-dark min-vh-100 border-end text-white">
           <div className="position-sticky pt-3">
             <div className="px-3 d-flex justify-content-between align-items-center mb-3">
-              <h5 className="text-accent mb-0">Raddazle Admin</h5>
+              <h5 className="text-accent mb-0">Raddazle</h5>
               {/* Close button visible on small screens */}
               <button 
-                className="btn btn-sm btn-outline-secondary d-md-none" 
+                className="btn btn-sm btn-outline-secondary d-md-none sidebar-close-btn"
                 onClick={() => setSidebarOpen(false)} 
                 aria-label="Close sidebar"
                 style={{ minWidth: '44px', minHeight: '44px' }}
@@ -84,12 +84,12 @@ const AdminLayout = ({ title, children }) => {
         )}
 
         {/* Main */}
-        <main className="col-md-9 ms-sm-auto col-lg-10 px-md-4 text-light admin-main">
-          <div className="admin-topbar d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-            <div className="d-flex align-items-center gap-3">
+        <main className="admin-main flex-grow-1 text-light">
+          <div className="admin-topbar">
+            <div className="d-flex align-items-center gap-2 gap-sm-3">
               {/* Sidebar toggle button on mobile */}
               <button 
-                className="btn btn-sm btn-outline-secondary d-md-none sidebar-toggle-btn" 
+                className="btn btn-outline-secondary d-md-none sidebar-toggle-btn" 
                 onClick={() => setSidebarOpen(true)} 
                 aria-label="Open sidebar"
               >
