@@ -84,10 +84,14 @@ const AdminProducts = () => {
     const ok = await confirm({ title: 'Delete product?', message: 'This action cannot be undone.', variant: 'danger', okText: 'Delete' });
     if (!ok) return;
     try {
-      await productService.delete(id);
+      console.log('Deleting product:', id);
+      const response = await productService.delete(id);
+      console.log('Delete response:', response);
       await fetchProducts(page);
       toast.success('Product deleted.');
     } catch (err) {
+      console.error('Delete error:', err);
+      console.error('Error response:', err.response);
       toast.error(err.response?.data?.message || 'Failed to delete product');
     }
   };
